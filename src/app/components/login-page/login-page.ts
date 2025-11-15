@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.state';
 import { AuthActions } from './state/auth.actions';
@@ -19,6 +20,7 @@ import { LoginRequestModel } from './models/login-request.model';
     MatInputModule,
     MatButtonModule,
     MatCheckboxModule,
+    MatSnackBarModule,
   ],
   templateUrl: './login-page.html',
   styleUrl: './login-page.scss',

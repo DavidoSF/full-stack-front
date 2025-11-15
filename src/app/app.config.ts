@@ -17,11 +17,13 @@ import { ProductEffects } from './components/shop-page/state/product.effects';
 import { AppEffects } from './store/app.effects';
 import { provideHttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpTokenInterceptor } from './interceptors/http-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
+    importProvidersFrom([HttpTokenInterceptor]),
     provideHttpClient(),
     importProvidersFrom([ReactiveFormsModule]),
     provideBrowserGlobalErrorListeners(),

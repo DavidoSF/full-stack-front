@@ -6,6 +6,8 @@ import { DevProductsComponent } from './dev/dev-products.component';
 import { DevProductRatingComponent } from './dev/dev-product-rating.component';
 import { AppPlaceholderComponent } from './components/app-placeholder.component';
 import { LoginPage } from './components/login-page/login-page';
+import { alreadyAuthenticatedGuard } from './guards/already-authenticated.guard';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -14,9 +16,10 @@ export const routes: Routes = [
   { path: 'dev/products', component: DevProductsComponent },
   { path: 'dev/products/:id/rating', component: DevProductRatingComponent },
   { path: 'app', component: AppPlaceholderComponent },
-  { path: 'login', component: LoginPage },
+  { path: 'login', component: LoginPage, canActivate: [alreadyAuthenticatedGuard] },
   {
     path: 'shop',
+    canActivate: [authGuard],
     loadChildren: () => import('./components/shop-page/shop.routes').then((m) => m.routes),
   },
   { path: '**', redirectTo: '' },

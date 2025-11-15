@@ -1,11 +1,13 @@
-<!-- Login Page - Using Angular Material -->
 <div class="login-container">
   <mat-card class="login-card">
-    <mat-card-header>
-      <mat-card-title>Login</mat-card-title>
-    </mat-card-header>
+    <div class="login-header">
+      <div class="title-group">
+        <h1 class="title">Welcome back</h1>
+        <p class="subtitle">Sign in to continue to your account</p>
+      </div>
+    </div>
     <mat-card-content>
-      <form [formGroup]="loginFormGroup">
+      <form [formGroup]="loginFormGroup" (ngSubmit)="login()" class="login-form">
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Username</mat-label>
           <input
@@ -16,6 +18,7 @@
             required
           />
         </mat-form-field>
+
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Password</mat-label>
           <input
@@ -27,14 +30,19 @@
             required
           />
         </mat-form-field>
+
+        <div class="form-row">
+          <mat-checkbox formControlName="rememberMe">Remember me</mat-checkbox>
+        </div>
+
         <button
           mat-raised-button
           color="primary"
           type="submit"
+          class="login-button"
           [disabled]="!loginFormGroup.valid"
-          (click)="login()"
         >
-          Login
+          Sign in
         </button>
       </form>
     </mat-card-content>

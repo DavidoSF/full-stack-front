@@ -1,0 +1,86 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f4f7fb 0%, #e9eef8 50%, #f8fbff 100%);
+  padding: 24px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 8px 0 16px 0;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(20, 30, 60, 0.12);
+  overflow: hidden;
+}
+
+.login-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px 8px 24px;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.subtitle {
+  margin: 2px 0 0 0;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 13px;
+}
+
+.login-form {
+  padding: 8px 24px 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.forgot-link {
+  font-size: 13px;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.login-button {
+  margin-top: 6px;
+  width: 100%;
+  height: 44px;
+  font-weight: 600;
+}
+
+.login-footer {
+  padding: 12px 24px 20px 24px;
+  text-align: center;
+}
+
+.no-account {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+}

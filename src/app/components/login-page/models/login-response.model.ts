@@ -2,5 +2,6 @@ import { CommonResponseModel } from '../../../shared/models/common-response.mode
 import { RefreshTokenModel } from './refresh-token.model';
 
 export interface LoginResponseModel extends CommonResponseModel {
-  token: RefreshTokenModel;
+  access: string;
+  refresh: string;
 }

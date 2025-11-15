@@ -4,6 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.state';
 import { AuthActions } from './state/auth.actions';
@@ -11,9 +12,16 @@ import { LoginRequestModel } from './models/login-request.model';
 
 @Component({
   selector: 'app-login-page',
-  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatInputModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCheckboxModule,
+  ],
   templateUrl: './login-page.html',
-  styleUrl: './login-page.css',
+  styleUrl: './login-page.scss',
 })
 export class LoginPage {
   constructor(private store: Store<AppState>) {}
@@ -21,6 +29,7 @@ export class LoginPage {
   loginFormGroup = new FormGroup({
     username: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required]),
+    rememberMe: new FormControl(false),
   });
 
   login() {

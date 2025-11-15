@@ -27,7 +27,14 @@ export class AuthEffects {
       ofType(AuthActions.refreshToken),
       switchMap(() =>
         this.authService.refreshToken().pipe(
-          map((response) => AuthActions.refreshTokenSuccess({ response: response.token })),
+          map((response) =>
+            AuthActions.refreshTokenSuccess({
+              response: {
+                access: response.access,
+                refresh: response.refresh,
+              },
+            }),
+          ),
           catchError((error) => of(AuthActions.refreshTokenFailure({ error }))),
         ),
       ),

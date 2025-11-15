@@ -1,1 +1,63 @@
-<p>products-page works!</p>
+<div class="products-page">
+  <div class="page-header">
+    <h2>Products</h2>
+    <p class="subtitle">Browsing available products</p>
+  </div>
+
+  <div class="products-grid">
+    @if (products$ | async; as products) {
+      @if (products.length === 0) {
+        <div class="empty">No products available.</div>
+      }
+
+      @for (p of products; track $index) {
+        <div class="product-card">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>{{ p.name }}</mat-card-title>
+              <mat-card-subtitle>{{
+                p._avg ? (p._avg | number: '1.1-2') + ' ★' : ''
+              }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="desc">{{ p.description }}</p>
+            </mat-card-content>
+            <mat-card-actions>
+              <div class="price">€{{ p.price | number: '1.2-2' }}</div>
+              <button mat-stroked-button color="primary">View</button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      }
+    }
+
+    @if (!(products$ | async)) {
+      <div class="loading">Loading products…</div>
+    }
+  </div>
+
+  @if (count$ | async; as totalCount) {
+    <div class="pagination">
+      <div class="pager">
+        <button mat-stroked-button (click)="prevPage()" [disabled]="page === 1">Previous</button>
+        <div class="page-info">Page {{ page }} of {{ totalPages(totalCount) || '-' }}</div>
+        <button
+          mat-stroked-button
+          (click)="nextPage(totalCount)"
+          [disabled]="page_size && totalCount ? page >= (totalPages(totalCount) || 0) : false"
+        >
+          Next
+        </button>
+      </div>
+
+      <div class="page-controls">
+        <label for="pageSize">Items per page</label>
+        <select id="pageSize" (change)="setPageSize($any($event.target).value)" [value]="page_size">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+        </select>
+      </div>
+    </div>
+  }
+</div>

@@ -108,13 +108,7 @@
           "options": {
             "configDir": ".storybook",
             "browserTarget": "my-shop:build",
-            "compodoc": true,
-            "compodocArgs": [
-              "-e",
-              "json",
-              "-d",
-              "."
-            ],
+            "compodoc": false,
             "port": 6006
           }
         },

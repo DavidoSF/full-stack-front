@@ -1,1 +1,20 @@
-<p>product-rating-page works!</p>
+<div class="rating-page">
+  <button mat-stroked-button (click)="back()">Back</button>
+
+  <div *ngIf="loading$ | async" class="loading">Loading rating…</div>
+
+  <div *ngIf="error$ | async as err" class="error">Error loading rating: {{ err | json }}</div>
+
+  <div *ngIf="summary$ | async as s" class="summary">
+    <!-- Matcard -->
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Product {{ s.product_id }} Rating</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="avg">Average: {{ s.avg_rating | number: '1.1-2' }} ★</p>
+        <p class="count">Count: {{ s.count }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

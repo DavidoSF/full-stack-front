@@ -9,7 +9,7 @@ export const routes: Routes = [
     component: ShopPage,
     children: [
       { path: 'products', component: ProductsPage },
-      { path: 'rating', component: ProductRatingPage },
+      { path: 'products/:id/rating', component: ProductRatingPage },
       {
         path: '',
         pathMatch: 'full',

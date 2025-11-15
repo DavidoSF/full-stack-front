@@ -7,4 +7,9 @@ export interface ProductState {
   previous?: string | null;
   page?: number;
   page_size?: number;
+
+  loading?: boolean;
+  error?: any;
+  product_id?: number;
+  avg_rating?: number;
 }

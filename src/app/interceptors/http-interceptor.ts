@@ -1,29 +1,25 @@
-import { Injectable } from '@angular/core';
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { first, switchMap } from 'rxjs';
 import { AppState } from '../store/app.state';
 import { selectAuthAccessToken } from '../components/login-page/state/auth.selectors';
-import { first, switchMap } from 'rxjs/operators';
 
-@Injectable()
-export class HttpTokenInterceptor implements HttpInterceptor {
-  constructor(private store: Store<AppState>) {}
+export const httpTokenInterceptor: HttpInterceptorFn = (req, next) => {
+  const store = inject(Store<AppState>);
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return this.store.select(selectAuthAccessToken).pipe(
-      first(),
-      switchMap((token) => {
-        if (token) {
-          const cloned = req.clone({
-            setHeaders: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          return next.handle(cloned);
-        }
-        return next.handle(req);
-      }),
-    );
-  }
-}
+  return store.select(selectAuthAccessToken).pipe(
+    first(),
+    switchMap((token) => {
+      if (token) {
+        const cloned = req.clone({
+          setHeaders: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return next(cloned);
+      }
+      return next(req);
+    }),
+  );
+};

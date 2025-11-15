@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { RouterModule } from '@angular/router';
 
 import { ProductModel } from '../models/product.model';
 import { selectAllProducts, selectProductsCount } from '../state/product.selectors';
@@ -13,7 +14,7 @@ import { ProductActions } from '../state/product.actions';
 @Component({
   selector: 'app-products-page',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, RouterModule],
   templateUrl: './products-page.html',
   styleUrl: './products-page.scss',
 })

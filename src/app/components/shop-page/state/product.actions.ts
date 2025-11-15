@@ -22,4 +22,14 @@ export class ProductActions {
     '[Product] Load Products Failure',
     props<{ error: ErrorResponseModel }>(),
   );
+
+  static loadProductRating = createAction('[ProductRating] Load', props<{ id: number }>());
+  static loadProductRatingSuccess = createAction(
+    '[ProductRating] Load Success',
+    props<{ product_id: number; avg_rating: number; count: number }>(),
+  );
+  static loadProductRatingFailure = createAction(
+    '[ProductRating] Load Failure',
+    props<{ error: any }>(),
+  );
 }

@@ -5,38 +5,40 @@
   </div>
 
   <div class="products-grid">
-    @if (products$ | async; as products) {
-      @if (products.length === 0) {
-        <div class="empty">No products available.</div>
-      }
+    <ng-container *ngIf="products$ | async as products">
+      <div *ngIf="products.length === 0" class="empty">No products available.</div>
 
-      @for (p of products; track $index) {
-        <div class="product-card">
-          <mat-card>
-            <mat-card-header>
-              <mat-card-title>{{ p.name }}</mat-card-title>
-              <mat-card-subtitle>{{
-                p._avg ? (p._avg | number: '1.1-2') + ' ★' : ''
-              }}</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <p class="desc">{{ p.description }}</p>
-            </mat-card-content>
-            <mat-card-actions>
-              <div class="price">€{{ p.price | number: '1.2-2' }}</div>
-              <button mat-stroked-button color="primary">View</button>
-            </mat-card-actions>
-          </mat-card>
-        </div>
-      }
-    }
+      <div class="product-card" *ngFor="let p of products">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>{{ p.name }}</mat-card-title>
+            <mat-card-subtitle>{{
+              p._avg ? (p._avg | number: '1.1-2') + ' ★' : ''
+            }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="desc">{{ p.description }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <div class="price">€{{ p.price | number: '1.2-2' }}</div>
+            <button
+              mat-stroked-button
+              color="primary"
+              [routerLink]="['/shop/products', p.id, 'rating']"
+            >
+              View
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </ng-container>
 
-    @if (!(products$ | async)) {
+    <ng-container *ngIf="!(products$ | async)">
       <div class="loading">Loading products…</div>
-    }
+    </ng-container>
   </div>
 
-  @if (count$ | async; as totalCount) {
+  <ng-container *ngIf="count$ | async as totalCount">
     <div class="pagination">
       <div class="pager">
         <button mat-stroked-button (click)="prevPage()" [disabled]="page === 1">Previous</button>
@@ -59,5 +61,5 @@
         </select>
       </div>
     </div>
-  }
+  </ng-container>
 </div>

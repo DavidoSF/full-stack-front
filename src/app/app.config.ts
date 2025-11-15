@@ -15,15 +15,16 @@ import { appReducer } from './store/app.reducer';
 import { AuthEffects } from './components/login-page/state/auth.effects';
 import { ProductEffects } from './components/shop-page/state/product.effects';
 import { AppEffects } from './store/app.effects';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpTokenInterceptor } from './interceptors/http-interceptor';
+import { httpTokenInterceptor } from './interceptors/http-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    importProvidersFrom([HttpTokenInterceptor]),
+    importProvidersFrom([ReactiveFormsModule]),
+    provideHttpClient(withInterceptors([httpTokenInterceptor])),
     provideHttpClient(),
     importProvidersFrom([ReactiveFormsModule]),
     provideBrowserGlobalErrorListeners(),

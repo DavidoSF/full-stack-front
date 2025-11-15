@@ -1,4 +1,3 @@
-// App Reducer
 import { ActionReducerMap, combineReducers } from '@ngrx/store';
 import { AppState } from './app.state';
 import { productReducer } from '../components/shop-page/state/product.reducer';

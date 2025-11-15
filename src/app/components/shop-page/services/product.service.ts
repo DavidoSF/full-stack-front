@@ -28,4 +28,9 @@ export class ProductService {
 
     return this.http.get<ListProductsResponse>(this.apiUrl, { params: httpParams });
   }
+
+  getProductRating(id: number) {
+    const url = `${this.apiUrl}${id}/rating/`;
+    return this.http.get<{ product_id: number; avg_rating: number; count: number }>(url);
+  }
 }

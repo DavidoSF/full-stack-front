@@ -32,4 +32,22 @@ export class ProductEffects {
       catchError((error) => of(ProductActions.loadProductsFailure({ error }))),
     ),
   );
+
+  loadProductRating$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ProductActions.loadProductRating),
+      switchMap((action: any) =>
+        this.productService.getProductRating(action.id).pipe(
+          map((res: any) =>
+            ProductActions.loadProductRatingSuccess({
+              product_id: res.product_id,
+              avg_rating: res.avg_rating,
+              count: res.count,
+            }),
+          ),
+          catchError((error) => of(ProductActions.loadProductRatingFailure({ error }))),
+        ),
+      ),
+    ),
+  );
 }

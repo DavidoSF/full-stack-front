@@ -9,27 +9,7 @@
       <div *ngIf="products.length === 0" class="empty">No products available.</div>
 
       <div class="product-card" *ngFor="let p of products">
-        <mat-card>
-          <mat-card-header>
-            <mat-card-title>{{ p.name }}</mat-card-title>
-            <mat-card-subtitle>{{
-              p._avg ? (p._avg | number: '1.1-2') + ' ★' : ''
-            }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p class="desc">{{ p.description }}</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <div class="price">€{{ p.price | number: '1.2-2' }}</div>
-            <button
-              mat-stroked-button
-              color="primary"
-              [routerLink]="['/shop/products', p.id, 'rating']"
-            >
-              View
-            </button>
-          </mat-card-actions>
-        </mat-card>
+        <app-product-item [product]="p"></app-product-item>
       </div>
     </ng-container>
 

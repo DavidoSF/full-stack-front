@@ -1,0 +1,23 @@
+@if (product) {
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ product.name }}</mat-card-title>
+      <mat-card-subtitle>
+        {{ product._avg ? (product._avg | number: '1.1-2') + ' ★' : '' }}
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p class="desc">{{ product.description }}</p>
+    </mat-card-content>
+    <mat-card-actions>
+      <div class="price">€{{ product.price | number: '1.2-2' }}</div>
+      <button
+        mat-stroked-button
+        color="primary"
+        [routerLink]="['/shop/products', product.id, 'rating']"
+      >
+        View
+      </button>
+    </mat-card-actions>
+  </mat-card>
+}

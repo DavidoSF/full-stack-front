@@ -10,11 +10,12 @@ import { ProductModel } from '../models/product.model';
 import { selectAllProducts, selectProductsCount } from '../state/product.selectors';
 import { AppState } from '../../../store/app.state';
 import { ProductActions } from '../state/product.actions';
+import { ProductItem } from './product-item/product-item';
 
 @Component({
   selector: 'app-products-page',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, RouterModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, RouterModule, ProductItem],
   templateUrl: './products-page.html',
   styleUrl: './products-page.scss',
 })

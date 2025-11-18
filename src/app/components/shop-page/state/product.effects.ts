@@ -43,6 +43,7 @@ export class ProductEffects {
               product_id: res.product_id,
               avg_rating: res.avg_rating,
               count: res.count,
+              ratings: res.ratings || [],
             }),
           ),
           catchError((error) => of(ProductActions.loadProductRatingFailure({ error }))),

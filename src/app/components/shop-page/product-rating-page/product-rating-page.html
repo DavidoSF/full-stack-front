@@ -1,20 +1,117 @@
 <div class="rating-page">
-  <button mat-stroked-button (click)="back()">Back</button>
+  <div class="page-header">
+    <button mat-icon-button (click)="back()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1 class="page-title">Product Rating Details</h1>
+  </div>
 
-  <div *ngIf="loading$ | async" class="loading">Loading rating…</div>
+  <div *ngIf="loading$ | async" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading product rating…</p>
+  </div>
 
-  <div *ngIf="error$ | async as err" class="error">Error loading rating: {{ err | json }}</div>
-
-  <div *ngIf="summary$ | async as s" class="summary">
-    <!-- Matcard -->
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>Product {{ s.product_id }} Rating</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <p class="avg">Average: {{ s.avg_rating | number: '1.1-2' }} ★</p>
-        <p class="count">Count: {{ s.count }}</p>
-      </mat-card-content>
+  <div *ngIf="error$ | async as err" class="error-state">
+    <mat-card class="error-card">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h2>Oops! Something went wrong</h2>
+      <p>Error loading rating information</p>
+      <button mat-raised-button color="primary" (click)="back()">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Products
+      </button>
     </mat-card>
+  </div>
+
+  <div *ngIf="summary$ | async as s" class="rating-content">
+    <div class="rating-grid">
+      <mat-card class="rating-summary-card">
+        <div class="rating-hero">
+          <div class="rating-score">
+            <div class="score-number">{{ s.avg_rating | number: '1.1' }}</div>
+            <div class="stars">
+              <mat-icon
+                *ngFor="let star of [1, 2, 3, 4, 5]"
+                class="star-icon"
+                [class.filled]="star <= (s.avg_rating || 0)"
+                [class.half]="star > (s.avg_rating || 0) && star - 0.5 <= (s.avg_rating || 0)"
+              >
+                {{
+                  star <= (s.avg_rating || 0)
+                    ? 'star'
+                    : star - 0.5 <= (s.avg_rating || 0)
+                      ? 'star_half'
+                      : 'star_outline'
+                }}
+              </mat-icon>
+            </div>
+            <p class="rating-label">Average Rating</p>
+          </div>
+          <div class="rating-stats">
+            <div class="stat-item">
+              <mat-icon class="stat-icon">people</mat-icon>
+              <div class="stat-content">
+                <div class="stat-number">{{ s.count }}</div>
+                <div class="stat-label">Total Reviews</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+      <mat-card class="product-info-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="title-icon">shopping_bag</mat-icon>
+            Product Information
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-row">
+            <span class="info-label">Product ID:</span>
+            <span class="info-value">{{ s.product_id }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Product Name:</span>
+            <span class="info-value">{{ product?.name ?? 'N/A' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Rating Score:</span>
+            <span class="info-value">{{ s.avg_rating | number: '1.2' }} / 5.00</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Price:</span>
+            <span class="info-value">{{ product?.price | currency: 'EUR' }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="breakdown-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="title-icon">bar_chart</mat-icon>
+            Rating Distribution
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="rating-bar" *ngFor="let star of [5, 4, 3, 2, 1]">
+            <div class="bar-label">{{ star }} <mat-icon class="mini-star">star</mat-icon></div>
+            <div class="bar-container">
+              <div class="bar-fill" [style.width.%]="getRatingPercentage(star)"></div>
+            </div>
+            <div class="bar-count">
+              {{ getRatingCount(star) }}
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="action-section">
+      <button mat-raised-button color="primary" (click)="back()" class="action-button">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Products
+      </button>
+    </div>
   </div>
 </div>

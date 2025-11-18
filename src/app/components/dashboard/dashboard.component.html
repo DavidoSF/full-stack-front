@@ -1,0 +1,73 @@
+<div class="content-wrapper">
+  <section class="hero-section">
+    <h1 class="hero-title">Welcome to MyShop</h1>
+    <p class="hero-subtitle">
+      Discover amazing products, exclusive deals, and an exceptional shopping experience
+    </p>
+    <div class="cta-buttons">
+      <button mat-raised-button color="accent" routerLink="/shop/products" class="cta-btn">
+        <mat-icon>shopping_cart</mat-icon>
+        Start Shopping
+      </button>
+      @if (!isLoggedIn()) {
+        <button mat-raised-button color="primary" routerLink="/login" class="cta-btn">
+          <mat-icon>login</mat-icon>
+          Sign In
+        </button>
+      }
+    </div>
+  </section>
+
+  <section class="features-section">
+    <h2 class="section-title">Why Choose Us</h2>
+    <div class="features-grid">
+      <mat-card class="feature-card">
+        <mat-icon class="feature-icon">local_shipping</mat-icon>
+        <h3 class="feature-title">Free Shipping</h3>
+        <p class="feature-description">
+          Enjoy free shipping on all orders over $50. Fast and reliable delivery to your doorstep.
+        </p>
+      </mat-card>
+
+      <mat-card class="feature-card">
+        <mat-icon class="feature-icon">verified_user</mat-icon>
+        <h3 class="feature-title">Secure Payment</h3>
+        <p class="feature-description">
+          Shop with confidence using our secure payment system. Your data is always protected.
+        </p>
+      </mat-card>
+
+      <mat-card class="feature-card">
+        <mat-icon class="feature-icon">support_agent</mat-icon>
+        <h3 class="feature-title">24/7 Support</h3>
+        <p class="feature-description">
+          Our dedicated support team is available around the clock to assist you with any questions.
+        </p>
+      </mat-card>
+
+      <mat-card class="feature-card">
+        <mat-icon class="feature-icon">inventory</mat-icon>
+        <h3 class="feature-title">Quality Products</h3>
+        <p class="feature-description">
+          We carefully curate our collection to ensure only the highest quality products.
+        </p>
+      </mat-card>
+
+      <mat-card class="feature-card">
+        <mat-icon class="feature-icon">star</mat-icon>
+        <h3 class="feature-title">Best Prices</h3>
+        <p class="feature-description">
+          Competitive pricing and regular deals ensure you get the best value for your money.
+        </p>
+      </mat-card>
+
+      <mat-card class="feature-card">
+        <mat-icon class="feature-icon">autorenew</mat-icon>
+        <h3 class="feature-title">Easy Returns</h3>
+        <p class="feature-description">
+          Not satisfied? Return any item within 30 days for a full refund, no questions asked.
+        </p>
+      </mat-card>
+    </div>
+  </section>
+</div>

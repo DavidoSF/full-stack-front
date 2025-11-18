@@ -23,4 +23,6 @@ export class AuthActions {
     '[Auth] Refresh Token Failure',
     props<{ error: ErrorResponseModel }>(),
   );
+
+  static logout = createAction('[Auth] Logout');
 }

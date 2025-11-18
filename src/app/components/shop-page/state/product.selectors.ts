@@ -15,4 +15,5 @@ export const selectProductRatingSummary = createSelector(selectProductState, (s)
   product_id: s?.product_id,
   avg_rating: s?.avg_rating,
   count: s?.count,
+  ratings: s?.ratings || [],
 }));

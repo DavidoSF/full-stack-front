@@ -1,0 +1,64 @@
+<mat-toolbar class="navbar" color="primary">
+  <div class="navbar-container">
+    <div class="navbar-brand">
+      <a routerLink="/app" class="logo-link">
+        <mat-icon class="logo-icon">shopping_bag</mat-icon>
+        <span class="logo-text">MyShop</span>
+      </a>
+    </div>
+
+    <nav class="navbar-nav">
+      <a
+        routerLink="/app"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        mat-button
+        class="nav-link"
+      >
+        <mat-icon>home</mat-icon>
+        <span>Home</span>
+      </a>
+      <a routerLink="/shop" routerLinkActive="active" mat-button class="nav-link">
+        <mat-icon>store</mat-icon>
+        <span>Shop</span>
+      </a>
+    </nav>
+
+    <div class="navbar-search">
+      <div class="search-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search products..."
+          (input)="onSearch($event)"
+        />
+      </div>
+    </div>
+
+    <div class="navbar-actions">
+      @if (isLoggedIn()) {
+        <button mat-button [matMenuTriggerFor]="userMenu" class="user-btn">
+          <mat-icon>account_circle</mat-icon>
+          <span class="user-name">{{ userName() }}</span>
+          <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu" class="user-menu">
+          <button mat-menu-item (click)="onLogout()">
+            <mat-icon>logout</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
+      } @else {
+        <button mat-raised-button color="accent" routerLink="/login" class="login-btn">
+          <mat-icon>login</mat-icon>
+          <span>Login</span>
+        </button>
+      }
+    </div>
+
+    <button mat-icon-button class="mobile-menu-btn">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>

@@ -17,15 +17,19 @@ export const productReducer = createReducer(
   on(ProductActions.loadProductRating, (state) => ({
     ...state,
     loading: true,
-    error: undefined,
+    error: null,
   })),
-  on(ProductActions.loadProductRatingSuccess, (state, { product_id, avg_rating, count }) => ({
-    ...state,
-    loading: false,
-    product_id,
-    avg_rating,
-    count,
-  })),
+  on(
+    ProductActions.loadProductRatingSuccess,
+    (state, { product_id, avg_rating, count, ratings }) => ({
+      ...state,
+      loading: false,
+      product_id,
+      avg_rating,
+      count,
+      ratings,
+    }),
+  ),
   on(ProductActions.loadProductRatingFailure, (state, { error }) => ({
     ...state,
     loading: false,

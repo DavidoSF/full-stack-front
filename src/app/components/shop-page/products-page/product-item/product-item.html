@@ -1,22 +1,35 @@
 @if (product) {
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>{{ product.name }}</mat-card-title>
-      <mat-card-subtitle>
-        {{ product._avg ? (product._avg | number: '1.1-2') + ' ★' : '' }}
-      </mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <p class="desc">{{ product.description }}</p>
+  <mat-card class="product-item-card">
+    <div class="card-image">
+      <div class="image-placeholder">
+        <mat-icon>shopping_bag</mat-icon>
+      </div>
+      @if (product._avg) {
+        <div class="rating-badge">
+          <mat-icon class="star-icon">star</mat-icon>
+          <span>{{ product._avg | number: '1.1-1' }}</span>
+        </div>
+      }
+    </div>
+
+    <mat-card-content class="card-body">
+      <h3 class="product-name">{{ product.name }}</h3>
+      <p class="product-description">{{ product.description }}</p>
     </mat-card-content>
-    <mat-card-actions>
-      <div class="price">€{{ product.price | number: '1.2-2' }}</div>
+
+    <mat-card-actions class="card-actions">
+      <div class="price-section">
+        <span class="price-label">Price</span>
+        <span class="price">€{{ product.price | number: '1.2-2' }}</span>
+      </div>
       <button
-        mat-stroked-button
+        mat-raised-button
         color="primary"
         [routerLink]="['/shop/products', product.id, 'rating']"
+        class="view-button"
       >
-        View
+        <mat-icon>visibility</mat-icon>
+        View Details
       </button>
     </mat-card-actions>
   </mat-card>

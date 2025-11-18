@@ -18,7 +18,17 @@ export class AuthEffects {
       ofType(AuthActions.login),
       switchMap((action) =>
         this.authService.login(action.request).pipe(
-          map((response) => AuthActions.loginSuccess({ response })),
+          map((response) =>
+            AuthActions.loginSuccess({
+              response: {
+                access: response.access,
+                refresh: response.refresh,
+                user: {
+                  username: action.request.username,
+                },
+              },
+            }),
+          ),
           catchError((error) => of(AuthActions.loginFailure({ error }))),
         ),
       ),
@@ -77,5 +87,16 @@ export class AuthEffects {
       ),
       catchError((error) => of(AuthActions.refreshTokenFailure({ error }))),
     ),
+  );
+
+  logout$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.logout),
+        tap(() => {
+          this.router.navigate(['/login']);
+        }),
+      ),
+    { dispatch: false },
   );
 }

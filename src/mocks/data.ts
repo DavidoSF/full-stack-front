@@ -167,6 +167,13 @@ export const products: Product[] = [
     price: 5.0,
     created_at: '2025-04-20T15:00:00Z',
     owner_id: 17,
-    ratings: [{ user_id: 9, value: 4 }],
+    ratings: [
+      { user_id: 9, value: 4 },
+      { user_id: 4, value: 5 },
+      { user_id: 1, value: 3 },
+      { user_id: 6, value: 4 },
+      { user_id: 7, value: 5 },
+      { user_id: 3, value: 5 },
+    ],
   },
 ];

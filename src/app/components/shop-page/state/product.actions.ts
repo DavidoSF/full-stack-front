@@ -26,7 +26,7 @@ export class ProductActions {
   static loadProductRating = createAction('[ProductRating] Load', props<{ id: number }>());
   static loadProductRatingSuccess = createAction(
     '[ProductRating] Load Success',
-    props<{ product_id: number; avg_rating: number; count: number }>(),
+    props<{ product_id: number; avg_rating: number; count: number; ratings: any[] }>(),
   );
   static loadProductRatingFailure = createAction(
     '[ProductRating] Load Failure',

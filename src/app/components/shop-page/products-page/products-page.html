@@ -1,12 +1,26 @@
 <div class="products-page">
   <div class="page-header">
-    <h2>Products</h2>
-    <p class="subtitle">Browsing available products</p>
+    <div class="header-content">
+      <div>
+        <h1 class="page-title">Our Products</h1>
+        <p class="subtitle">Discover our curated collection of quality products</p>
+      </div>
+      <div class="header-stats" *ngIf="count$ | async as totalCount">
+        <mat-card class="stats-card">
+          <div class="stats-number">{{ totalCount }}</div>
+          <div class="stats-label">Total Products</div>
+        </mat-card>
+      </div>
+    </div>
   </div>
 
   <div class="products-grid">
     <ng-container *ngIf="products$ | async as products">
-      <div *ngIf="products.length === 0" class="empty">No products available.</div>
+      <div *ngIf="products.length === 0" class="empty-state">
+        <mat-icon class="empty-icon">inventory_2</mat-icon>
+        <h3>No products available</h3>
+        <p>Check back later for new items</p>
+      </div>
 
       <div class="product-card" *ngFor="let p of products">
         <app-product-item [product]="p"></app-product-item>
@@ -14,31 +28,51 @@
     </ng-container>
 
     <ng-container *ngIf="!(products$ | async)">
-      <div class="loading">Loading products…</div>
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading products…</p>
+      </div>
     </ng-container>
   </div>
 
   <ng-container *ngIf="count$ | async as totalCount">
     <div class="pagination">
-      <div class="pager">
-        <button mat-stroked-button (click)="prevPage()" [disabled]="page === 1">Previous</button>
-        <div class="page-info">Page {{ page }} of {{ totalPages(totalCount) || '-' }}</div>
-        <button
-          mat-stroked-button
-          (click)="nextPage(totalCount)"
-          [disabled]="page_size && totalCount ? page >= (totalPages(totalCount) || 0) : false"
-        >
-          Next
-        </button>
+      <div class="pagination-info">
+        <span class="results-count">
+          Showing {{ (page - 1) * page_size + 1 }}-{{
+            page * page_size > totalCount ? totalCount : page * page_size
+          }}
+          of {{ totalCount }} products
+        </span>
       </div>
 
-      <div class="page-controls">
-        <label for="pageSize">Items per page</label>
-        <select id="pageSize" (change)="setPageSize($any($event.target).value)" [value]="page_size">
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
-        </select>
+      <div class="pagination-controls">
+        <div class="page-size-selector">
+          <label for="pageSize">Show:</label>
+          <select
+            id="pageSize"
+            (change)="setPageSize($any($event.target).value)"
+            [value]="page_size"
+          >
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+          </select>
+        </div>
+
+        <div class="pager">
+          <button mat-icon-button (click)="prevPage()" [disabled]="page === 1">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <span class="page-info">{{ page }} / {{ totalPages(totalCount) || '-' }}</span>
+          <button
+            mat-icon-button
+            (click)="nextPage(totalCount)"
+            [disabled]="page_size && totalCount ? page >= (totalPages(totalCount) || 0) : false"
+          >
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
   </ng-container>

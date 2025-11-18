@@ -19,10 +19,16 @@ export const authReducer = createReducer(
       access: response.access,
       refresh: response.refresh,
     },
+    user: response.user,
   })),
   on(AuthActions.loginFailure, (state, { error }) => ({
     ...state,
     loading: false,
     error: error,
+  })),
+  on(AuthActions.logout, (state) => ({
+    ...state,
+    token: undefined,
+    user: undefined,
   })),
 );

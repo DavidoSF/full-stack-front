@@ -1,4 +1,5 @@
 import { ProductModel } from '../models/product.model';
+import { ProductRatingModel } from '../models/product-rating.model';
 
 export interface ProductState {
   products?: ProductModel[];
@@ -12,4 +13,5 @@ export interface ProductState {
   error?: any;
   product_id?: number;
   avg_rating?: number;
+  ratings?: ProductRatingModel[];
 }

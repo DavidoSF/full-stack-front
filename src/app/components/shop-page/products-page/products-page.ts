@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -19,25 +19,59 @@ import { ProductItem } from './product-item/product-item';
   templateUrl: './products-page.html',
   styleUrl: './products-page.scss',
 })
-export class ProductsPage implements OnInit {
+export class ProductsPage implements OnInit, OnChanges {
   products$: Observable<ProductModel[] | undefined> | undefined;
   count$: Observable<number | undefined> | undefined;
 
+  @Input()
   page = 1;
+
+  @Input()
   page_size = 10;
+
+  @Input()
+  listProducts: ProductModel[] | undefined;
 
   constructor(private store: Store<AppState>) {}
 
   ngOnInit(): void {
-    this.products$ = this.store.select(selectAllProducts);
-    this.count$ = this.store.select(selectProductsCount);
-    this.loadPage();
+    this.updateProductsList();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['page'] || changes['page_size'] || changes['listProducts']) {
+      this.updateProductsList();
+    }
+  }
+
+  updateProductsList() {
+    if (this.listProducts) {
+      const startIndex = (this.page - 1) * this.page_size;
+      const endIndex = startIndex + this.page_size;
+      const paginatedProducts = this.listProducts.slice(startIndex, endIndex);
+
+      this.products$ = new Observable((observer) => {
+        observer.next(paginatedProducts);
+        observer.complete();
+      });
+
+      this.count$ = new Observable((observer) => {
+        observer.next(this.listProducts!.length);
+        observer.complete();
+      });
+    } else {
+      this.products$ = this.store.select(selectAllProducts);
+      this.count$ = this.store.select(selectProductsCount);
+      this.loadPage();
+    }
   }
 
   loadPage() {
-    this.store.dispatch(
-      ProductActions.loadProducts({ params: { page: this.page, page_size: this.page_size } }),
-    );
+    if (!this.listProducts) {
+      this.store.dispatch(
+        ProductActions.loadProducts({ params: { page: this.page, page_size: this.page_size } }),
+      );
+    }
   }
 
   prevPage() {

@@ -7,7 +7,7 @@
       </div>
     </div>
     <mat-card-content>
-      <form [formGroup]="loginFormGroup" (ngSubmit)="login()" class="login-form">
+      <form [formGroup]="loginFormGroup" (ngSubmit)="login($event)" class="login-form">
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Username</mat-label>
           <input
@@ -17,6 +17,9 @@
             formControlName="username"
             required
           />
+          <mat-error *ngIf="loginFormGroup.get('username')?.hasError('required')"
+            >Username is required</mat-error
+          >
         </mat-form-field>
 
         <mat-form-field appearance="fill" class="full-width">
@@ -29,6 +32,9 @@
             formControlName="password"
             required
           />
+          <mat-error *ngIf="loginFormGroup.get('password')?.hasError('required')"
+            >Password is required</mat-error
+          >
         </mat-form-field>
 
         <div class="form-row">

@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  useMsw: false,
+  useMsw: true,
   apiBaseUrl: '/api/',
 };

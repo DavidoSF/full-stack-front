@@ -1,25 +1,38 @@
 # MyShop
 
-An Angular shop application with authentication and product management.
+An Angular e-commerce application with shopping cart, orders, and address management.
 
 ## Features
 
-- Authentication system with JWT tokens and refresh token handling
-- Product catalog with filtering and ratings
-- User dashboard
-- NgRx state management
-- Mock Service Worker for API mocking
-- Storybook for component development
-- Angular Material UI components
+- **Auth**: JWT tokens with refresh token + localStorage persistence
+- **Shop**: Product catalog with filtering, ratings, and details
+- **Cart & Wishlist**: Full shopping cart with coupons (SAVE10, SAVE20, WELCOME, SUMMER25)
+- **Checkout**: 3-step flow (summary → address → confirm)
+- **Orders**: Order history with cancellation
+- **Addresses**: Saved addresses with default selection
+- **State**: NgRx with effects + localStorage sync
+- **UI**: Angular Material + animations
+- **Mocking**: MSW for API simulation
+- **Storybook**: Component documentation
 
 ## Quick Start
 
-Install dependencies:
-
 ```bash
 npm install
+npm start              # → http://localhost:4200/
+npm run storybook      # → http://localhost:6006/
 ```
 
-- **Run the app**: `npm start` → `http://localhost:4200/`
-- **Run Storybook**: `npm run storybook` → `http://localhost:6006/`
-- **State management**: NgRx store lives in `src/app/store/` (global) and `src/app/components/*/state/` (feature-specific)
+## Routes
+
+- `/login` - Authentication
+- `/shop/products` - Product listing
+- `/shop/products/:id` - Product details
+- `/shop/cart` - Shopping cart
+- `/shop/wishlist` - Wishlist
+- `/shop/checkout/summary` - Checkout step 1
+- `/shop/checkout/address` - Checkout step 2
+- `/shop/checkout/confirm` - Checkout step 3
+- `/shop/orders` - Order history
+- `/shop/address` - Address management
+- `/dashboard` - User dashboard

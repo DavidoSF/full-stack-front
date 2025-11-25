@@ -1,0 +1,157 @@
+<div class="step-container">
+  <h2>Shipping Address</h2>
+
+  <div class="saved-addresses" *ngIf="(savedAddresses$ | async)?.length! > 0">
+    <h3>Select a saved address</h3>
+    <div class="address-cards">
+      <mat-card
+        *ngFor="let address of savedAddresses$ | async"
+        class="address-card"
+        [class.selected]="isSelectedAddress(address)"
+        (click)="selectAddress(address)"
+      >
+        <mat-card-content>
+          <p class="address-name">
+            <mat-icon>person</mat-icon>
+            {{ address.firstName }} {{ address.lastName }}
+            <span class="default-badge" *ngIf="isDefaultAddress(address)">DEFAULT</span>
+          </p>
+          <p><mat-icon>email</mat-icon> {{ address.email }}</p>
+          <p><mat-icon>phone</mat-icon> {{ address.phone }}</p>
+          <p><mat-icon>location_on</mat-icon> {{ address.street }}</p>
+          <p class="city-info">
+            {{ address.city }}, {{ address.postalCode }}, {{ address.country }}
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <button type="button" mat-button (click)="useNewAddress()" class="new-address-btn">
+      <mat-icon>add</mat-icon>
+      Use a different address
+    </button>
+  </div>
+
+  <form [formGroup]="addressForm" (ngSubmit)="onSubmit()">
+    @if (showForm) {
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name *</label>
+          <input id="firstName" type="text" formControlName="firstName" />
+          <span
+            class="error"
+            *ngIf="addressForm.get('firstName')?.invalid && addressForm.get('firstName')?.touched"
+          >
+            First name is required
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Last Name *</label>
+          <input id="lastName" type="text" formControlName="lastName" />
+          <span
+            class="error"
+            *ngIf="addressForm.get('lastName')?.invalid && addressForm.get('lastName')?.touched"
+          >
+            Last name is required
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input id="email" type="email" formControlName="email" />
+          <span
+            class="error"
+            *ngIf="addressForm.get('email')?.invalid && addressForm.get('email')?.touched"
+          >
+            Valid email is required
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone *</label>
+          <input id="phone" type="tel" formControlName="phone" />
+          <span
+            class="error"
+            *ngIf="addressForm.get('phone')?.invalid && addressForm.get('phone')?.touched"
+          >
+            Phone is required
+          </span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="street">Street Address *</label>
+        <input id="street" type="text" formControlName="street" />
+        <span
+          class="error"
+          *ngIf="addressForm.get('street')?.invalid && addressForm.get('street')?.touched"
+        >
+          Street address is required
+        </span>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="city">City *</label>
+          <input id="city" type="text" formControlName="city" />
+          <span
+            class="error"
+            *ngIf="addressForm.get('city')?.invalid && addressForm.get('city')?.touched"
+          >
+            City is required
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="postalCode">Postal Code *</label>
+          <input id="postalCode" type="text" formControlName="postalCode" />
+          <span
+            class="error"
+            *ngIf="addressForm.get('postalCode')?.invalid && addressForm.get('postalCode')?.touched"
+          >
+            Postal code is required
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="country">Country *</label>
+          <input id="country" type="text" formControlName="country" />
+          <span
+            class="error"
+            *ngIf="addressForm.get('country')?.invalid && addressForm.get('country')?.touched"
+          >
+            Country is required
+          </span>
+        </div>
+      </div>
+    }
+    <div class="order-summary">
+      <h3>Order Summary</h3>
+      <div class="summary-line">
+        <span>Subtotal:</span>
+        <span>{{ subtotal$ | async | currency: 'EUR' }}</span>
+      </div>
+      <div class="summary-line discount" *ngIf="(discount$ | async)! > 0">
+        <span>Discount ({{ couponCode$ | async }}):</span>
+        <span>-{{ discount$ | async | currency: 'EUR' }}</span>
+      </div>
+      <div class="summary-line total">
+        <strong>Total:</strong>
+        <strong>{{ total$ | async | currency: 'EUR' }}</strong>
+      </div>
+    </div>
+
+    <div class="step-actions">
+      <button type="button" class="secondary-btn" (click)="goBack()">Back</button>
+      <button
+        type="submit"
+        class="primary-btn"
+        [disabled]="showForm ? addressForm.invalid : selectedAddress ? false : true"
+      >
+        Continue to Confirmation
+      </button>
+    </div>
+  </form>
+</div>

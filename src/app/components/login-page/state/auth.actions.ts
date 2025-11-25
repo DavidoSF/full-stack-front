@@ -25,4 +25,9 @@ export class AuthActions {
   );
 
   static logout = createAction('[Auth] Logout');
+  static loadAuthFromStorage = createAction('[Auth] Load From Storage');
+  static loadAuthFromStorageSuccess = createAction(
+    '[Auth] Load From Storage Success',
+    props<{ response: LoginResponseModel }>(),
+  );
 }

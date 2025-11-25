@@ -22,15 +22,25 @@
         <span class="price-label">Price</span>
         <span class="price">€{{ product.price | number: '1.2-2' }}</span>
       </div>
-      <button
-        mat-raised-button
-        color="primary"
-        [routerLink]="['/shop/products', product.id, 'rating']"
-        class="view-button"
-      >
-        <mat-icon>visibility</mat-icon>
-        View Details
-      </button>
+      <div class="action-buttons">
+        <button
+          mat-raised-button
+          color="primary"
+          [routerLink]="['/shop/products', product.id]"
+          class="view-button"
+        >
+          <mat-icon>visibility</mat-icon>
+          View Details
+        </button>
+        <button
+          mat-stroked-button
+          [routerLink]="['/shop/products', product.id, 'rating']"
+          class="rating-button"
+        >
+          <mat-icon>star</mat-icon>
+          Ratings
+        </button>
+      </div>
     </mat-card-actions>
   </mat-card>
 }

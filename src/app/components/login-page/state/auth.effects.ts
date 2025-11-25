@@ -62,7 +62,8 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
-        tap(() => {
+        tap((action) => {
+          localStorage.setItem('auth_state', JSON.stringify(action.response));
           this.router.navigate(['/shop']);
         }),
       ),
@@ -94,9 +95,25 @@ export class AuthEffects {
       this.actions$.pipe(
         ofType(AuthActions.logout),
         tap(() => {
+          localStorage.removeItem('auth_state');
           this.router.navigate(['/login']);
         }),
       ),
     { dispatch: false },
+  );
+
+  loadAuthFromStorage$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.loadAuthFromStorage),
+      map(() => {
+        const authData = localStorage.getItem('auth_state');
+        if (authData) {
+          const response = JSON.parse(authData);
+          return AuthActions.loadAuthFromStorageSuccess({ response });
+        }
+        return { type: '[Auth] No Stored Auth' };
+      }),
+      catchError(() => of({ type: '[Auth] Load Storage Failed' })),
+    ),
   );
 }

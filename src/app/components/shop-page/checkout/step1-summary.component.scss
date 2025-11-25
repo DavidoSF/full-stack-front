@@ -1,0 +1,84 @@
+.step-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+h2 {
+  margin: 0 0 24px 0;
+  font-size: 24px;
+}
+
+.items-list {
+  margin-bottom: 24px;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.item-info h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+.item-info p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.item-price {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-size: 18px;
+  margin-bottom: 24px;
+}
+
+.step-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+}
+
+.primary-btn,
+.secondary-btn {
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.primary-btn {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+}
+
+.primary-btn:hover {
+  background-color: #1565c0;
+}
+
+.secondary-btn {
+  background-color: white;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.secondary-btn:hover {
+  background-color: #f5f5f5;
+}

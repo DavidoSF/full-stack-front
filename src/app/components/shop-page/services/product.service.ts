@@ -1,8 +1,6 @@
-// Product service
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ProductModel } from '../models/product.model';
 import { ListProductsResponse } from '../models/products-response.mdoel';
 
 @Injectable({

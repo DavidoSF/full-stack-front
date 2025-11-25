@@ -6,11 +6,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store/app.state';
 import { selectAuthUser, selectIsAuthenticated } from '../login-page/state/auth.selectors';
 import { AuthActions } from '../login-page/state/auth.actions';
+import { CartIconComponent } from '../shop-page/cart/cart-icon.component';
+import { selectWishlistCount } from '../shop-page/wishlist/state/wishlist.selectors';
 
 @Component({
   selector: 'app-navbar',
@@ -24,6 +28,8 @@ import { AuthActions } from '../login-page/state/auth.actions';
     MatMenuModule,
     MatBadgeModule,
     MatDividerModule,
+    MatTooltipModule,
+    CartIconComponent,
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
@@ -31,10 +37,13 @@ import { AuthActions } from '../login-page/state/auth.actions';
 export class Navbar implements OnInit {
   isLoggedIn = signal(false);
   userName = signal('Guest');
+  wishlistCount$!: Observable<number>;
 
   constructor(private store: Store<AppState>) {}
 
   ngOnInit() {
+    this.wishlistCount$ = this.store.select(selectWishlistCount);
+
     this.store.select(selectIsAuthenticated).subscribe((isAuth) => {
       this.isLoggedIn.set(isAuth);
       if (isAuth) {

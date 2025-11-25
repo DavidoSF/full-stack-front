@@ -1,0 +1,35 @@
+<div class="step-container">
+  <h2>Order Summary</h2>
+
+  <div class="items-list">
+    <div class="item" *ngFor="let item of cartItems$ | async">
+      <div class="item-info">
+        <h3>{{ item.name }}</h3>
+        <p>Quantity: {{ item.quantity }}</p>
+      </div>
+      <div class="item-price">
+        {{ item.price * item.quantity | currency: 'EUR' }}
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section">
+    <div class="summary-line">
+      <span>Subtotal:</span>
+      <span>{{ subtotal$ | async | currency: 'EUR' }}</span>
+    </div>
+    <div class="summary-line discount" *ngIf="(discount$ | async)! > 0">
+      <span>Discount ({{ couponCode$ | async }}):</span>
+      <span>-{{ discount$ | async | currency: 'EUR' }}</span>
+    </div>
+    <div class="summary-line total">
+      <strong>Total:</strong>
+      <strong>{{ total$ | async | currency: 'EUR' }}</strong>
+    </div>
+  </div>
+
+  <div class="step-actions">
+    <button class="secondary-btn" (click)="goBack()">Back to Cart</button>
+    <button class="primary-btn" (click)="nextStep()">Continue to Address</button>
+  </div>
+</div>

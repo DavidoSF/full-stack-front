@@ -37,6 +37,22 @@
     </div>
 
     <div class="navbar-actions">
+      <button
+        mat-icon-button
+        routerLink="/shop/wishlist"
+        class="wishlist-icon-btn"
+        matTooltip="Wishlist"
+      >
+        <mat-icon
+          [matBadge]="wishlistCount$ | async"
+          [matBadgeHidden]="(wishlistCount$ | async) === 0"
+          matBadgeColor="warn"
+          matBadgeSize="small"
+          >favorite</mat-icon
+        >
+      </button>
+      <app-cart-icon [showTooltip]="true"></app-cart-icon>
+
       @if (isLoggedIn()) {
         <button mat-button [matMenuTriggerFor]="userMenu" class="user-btn">
           <mat-icon>account_circle</mat-icon>
@@ -44,6 +60,15 @@
           <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
         </button>
         <mat-menu #userMenu="matMenu" class="user-menu">
+          <button mat-menu-item routerLink="/shop/orders">
+            <mat-icon>receipt_long</mat-icon>
+            <span>My Orders</span>
+          </button>
+          <button mat-menu-item routerLink="/shop/address">
+            <mat-icon>location_on</mat-icon>
+            <span>My Address</span>
+          </button>
+          <mat-divider></mat-divider>
           <button mat-menu-item (click)="onLogout()">
             <mat-icon>logout</mat-icon>
             <span>Logout</span>

@@ -79,8 +79,17 @@
           </div>
         </div>
       </mat-card-content>
-      <mat-card-actions *ngIf="order.status !== 'Cancelled' && order.status !== 'Delivered'">
-        <button mat-button color="warn" (click)="cancelOrder(order.orderId!)">
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="viewOrderDetails(order.orderId!)">
+          <mat-icon>visibility</mat-icon>
+          View Details
+        </button>
+        <button
+          mat-button
+          color="warn"
+          (click)="cancelOrder(order.orderId!)"
+          *ngIf="order.status !== 'Cancelled' && order.status !== 'Delivered'"
+        >
           <mat-icon>cancel</mat-icon>
           Cancel Order
         </button>

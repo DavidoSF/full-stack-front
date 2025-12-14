@@ -13,7 +13,7 @@ export class AddressActions {
 
   static setDefaultAddress = createAction(
     '[Address] Set Default Address',
-    props<{ address: Address }>(),
+    props<{ index: number; address: Address }>(),
   );
 
   static loadAddresses = createAction('[Address] Load Addresses');

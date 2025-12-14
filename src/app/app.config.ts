@@ -41,6 +41,7 @@ export const appConfig: ApplicationConfig = {
       CartEffects,
       WishlistEffects,
       OrderEffects,
+      AddressEffects,
     ]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     provideAnimationsAsync(),

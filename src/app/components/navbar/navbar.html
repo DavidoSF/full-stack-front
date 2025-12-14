@@ -70,13 +70,17 @@
             <span>{{ userName() }}</span>
           </div>
           <mat-divider></mat-divider>
+          <button mat-menu-item routerLink="/account/profile">
+            <mat-icon>person</mat-icon>
+            <span>My Profile</span>
+          </button>
           <button mat-menu-item routerLink="/shop/orders">
-            <mat-icon>receipt</mat-icon>
-            <span>Orders</span>
+            <mat-icon>receipt_long</mat-icon>
+            <span>My Orders</span>
           </button>
           <button mat-menu-item routerLink="/shop/address">
             <mat-icon>place</mat-icon>
-            <span>Addresses</span>
+            <span>My Addresses</span>
           </button>
           <mat-divider></mat-divider>
           <button mat-menu-item (click)="onLogout()" class="logout-item">

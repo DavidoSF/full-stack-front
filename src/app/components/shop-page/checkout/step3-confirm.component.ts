@@ -14,9 +14,9 @@ import {
   selectCartDiscount,
   selectCartCouponCode,
 } from '../cart/state/cart.selectors';
-import { selectCurrentOrder, selectOrderLoading } from '../orders/state/order.selectors';
-import { OrderActions } from '../orders/state/order.actions';
 import { CartActions } from '../cart/state/cart.actions';
+import { OrderActions } from '../orders/state/order.actions';
+import { selectOrderLoading, selectCurrentOrder } from '../orders/state/order.selectors';
 
 @Component({
   selector: 'app-step3-confirm',

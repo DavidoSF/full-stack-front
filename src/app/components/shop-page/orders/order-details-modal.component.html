@@ -1,0 +1,156 @@
+<h2 mat-dialog-title>
+  <div class="modal-header">
+    <div>
+      <div class="order-title">Order Details</div>
+      <div class="order-subtitle">Order #{{ order.orderId }}</div>
+    </div>
+    <button mat-icon-button mat-dialog-close>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</h2>
+
+<mat-dialog-content>
+  <div class="status-section">
+    <h3>Order Status</h3>
+    <div class="status-progress">
+      <div
+        class="status-step"
+        [class.active]="isStepActive('confirmed')"
+        [class.completed]="isStepCompleted('confirmed')"
+      >
+        <div class="step-icon">
+          <mat-icon>{{
+            isStepCompleted('confirmed') ? 'check_circle' : 'radio_button_checked'
+          }}</mat-icon>
+        </div>
+        <div class="step-label">Confirmed</div>
+      </div>
+
+      <div class="status-line" [class.completed]="isStepCompleted('processing')"></div>
+
+      <div
+        class="status-step"
+        [class.active]="isStepActive('processing')"
+        [class.completed]="isStepCompleted('processing')"
+      >
+        <div class="step-icon">
+          <mat-icon>{{
+            isStepCompleted('processing') ? 'check_circle' : 'radio_button_unchecked'
+          }}</mat-icon>
+        </div>
+        <div class="step-label">Processing</div>
+      </div>
+
+      <div class="status-line" [class.completed]="isStepCompleted('shipped')"></div>
+
+      <div
+        class="status-step"
+        [class.active]="isStepActive('shipped')"
+        [class.completed]="isStepCompleted('shipped')"
+      >
+        <div class="step-icon">
+          <mat-icon>{{
+            isStepCompleted('shipped') ? 'check_circle' : 'radio_button_unchecked'
+          }}</mat-icon>
+        </div>
+        <div class="step-label">Shipped</div>
+      </div>
+
+      <div class="status-line" [class.completed]="isStepCompleted('delivered')"></div>
+
+      <div
+        class="status-step"
+        [class.active]="isStepActive('delivered')"
+        [class.completed]="isStepCompleted('delivered')"
+      >
+        <div class="step-icon">
+          <mat-icon>{{
+            isStepCompleted('delivered') ? 'check_circle' : 'radio_button_unchecked'
+          }}</mat-icon>
+        </div>
+        <div class="step-label">Delivered</div>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="info-section">
+    <div class="info-row">
+      <span class="info-label">Confirmation Number:</span>
+      <span class="info-value">{{ order.confirmationNumber }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Order Date:</span>
+      <span class="info-value">{{ order.createdAt | date: 'medium' }}</span>
+    </div>
+    <div class="info-row" *ngIf="order.estimatedDelivery">
+      <span class="info-label">Estimated Delivery:</span>
+      <span class="info-value">{{ order.estimatedDelivery | date: 'mediumDate' }}</span>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="items-section">
+    <h3>Items ({{ order.items.length }})</h3>
+    <div class="item-list">
+      <div class="item" *ngFor="let item of order.items">
+        <div class="item-details">
+          <div class="item-name">{{ item.name }}</div>
+          <div class="item-quantity">Quantity: {{ item.quantity }}</div>
+        </div>
+        <div class="item-price">{{ item.price * item.quantity | currency: 'EUR' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="address-section">
+    <h3>Shipping Address</h3>
+    <div class="address">
+      <p>{{ order.shippingAddress.firstName }} {{ order.shippingAddress.lastName }}</p>
+      <p>{{ order.shippingAddress.street }}</p>
+      <p>{{ order.shippingAddress.city }}, {{ order.shippingAddress.postalCode }}</p>
+      <p>{{ order.shippingAddress.country }}</p>
+      <p *ngIf="order.shippingAddress.email">Email: {{ order.shippingAddress.email }}</p>
+      <p *ngIf="order.shippingAddress.phone">Phone: {{ order.shippingAddress.phone }}</p>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="summary-section">
+    <h3>Order Summary</h3>
+    <div class="summary-line">
+      <span>Subtotal:</span>
+      <span>{{ order.subtotal | currency: 'EUR' }}</span>
+    </div>
+    <div class="summary-line" *ngIf="order.discount && order.discount > 0">
+      <span>Discount ({{ order.couponCode }}):</span>
+      <span class="discount">-{{ order.discount | currency: 'EUR' }}</span>
+    </div>
+    <div class="summary-line">
+      <span>Shipping:</span>
+      <span>{{ order.shipping | currency: 'EUR' }}</span>
+    </div>
+    <div class="summary-line">
+      <span>Tax:</span>
+      <span>{{ order.tax | currency: 'EUR' }}</span>
+    </div>
+    <div class="summary-line total">
+      <span>Total:</span>
+      <span>{{ order.total | currency: 'EUR' }}</span>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-raised-button color="primary" (click)="printOrder()">
+    <mat-icon>print</mat-icon>
+    Print Order
+  </button>
+</mat-dialog-actions>

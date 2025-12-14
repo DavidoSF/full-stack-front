@@ -23,8 +23,10 @@ export class AuthEffects {
               response: {
                 access: response.access,
                 refresh: response.refresh,
-                user: {
+                user: response.user || {
                   username: action.request.username,
+                  email: '',
+                  fullName: '',
                 },
               },
             }),
@@ -105,13 +107,26 @@ export class AuthEffects {
   loadAuthFromStorage$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.loadAuthFromStorage),
-      map(() => {
+      switchMap(() => {
         const authData = localStorage.getItem('auth_state');
         if (authData) {
-          const response = JSON.parse(authData);
-          return AuthActions.loadAuthFromStorageSuccess({ response });
+          const storedAuth = JSON.parse(authData);
+          return this.authService.getCurrentUser().pipe(
+            map((user) =>
+              AuthActions.loadAuthFromStorageSuccess({
+                response: {
+                  access: storedAuth.access,
+                  refresh: storedAuth.refresh,
+                  user: user,
+                },
+              }),
+            ),
+            catchError(() => {
+              return of(AuthActions.loadAuthFromStorageSuccess({ response: storedAuth }));
+            }),
+          );
         }
-        return { type: '[Auth] No Stored Auth' };
+        return of({ type: '[Auth] No Stored Auth' });
       }),
       catchError(() => of({ type: '[Auth] Load Storage Failed' })),
     ),

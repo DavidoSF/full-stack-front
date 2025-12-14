@@ -135,7 +135,7 @@
       </div>
       <div class="summary-line discount" *ngIf="(discount$ | async)! > 0">
         <span>Discount ({{ couponCode$ | async }}):</span>
-        <span>-{{ discount$ | async | currency: 'EUR' }}</span>
+        <span>-{{ ((subtotal$ | async)! * (discount$ | async)!) / 100 | currency: 'EUR' }}</span>
       </div>
       <div class="summary-line total">
         <strong>Total:</strong>

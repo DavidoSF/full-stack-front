@@ -17,3 +17,5 @@ export const selectAuthUser = createSelector(
   selectAuthState,
   (state: AuthState) => state.user || null,
 );
+
+export const selectUser = selectAuthUser;

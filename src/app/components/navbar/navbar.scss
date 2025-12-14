@@ -200,10 +200,15 @@
       height: 44px;
       border-radius: 12px;
       transition: all 0.2s ease;
+      position: relative;
 
       &:hover {
         background: #f5f5f5;
         transform: translateY(-2px);
+
+        mat-icon {
+          animation: heartBeat 0.6s ease-in-out;
+        }
       }
 
       mat-icon {
@@ -358,6 +363,22 @@
       .login-button span {
         display: none;
       }
+    }
+  }
+
+  @keyframes heartBeat {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    25% {
+      transform: scale(1.2);
+    }
+    50% {
+      transform: scale(0.95);
+    }
+    75% {
+      transform: scale(1.15);
     }
   }
 }

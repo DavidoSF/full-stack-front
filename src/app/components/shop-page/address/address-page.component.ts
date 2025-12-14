@@ -98,8 +98,20 @@ export class AddressPageComponent implements OnInit {
   }
 
   setAsDefault(address: Address) {
-    this.store.dispatch(AddressActions.setDefaultAddress({ address }));
-    this.snackBar.open('Default address updated!', 'Close', { duration: 3000 });
+    let index = -1;
+    this.savedAddresses$
+      .subscribe((addresses) => {
+        index = addresses.findIndex(
+          (a) =>
+            a.email === address.email && a.street === address.street && a.city === address.city,
+        );
+      })
+      .unsubscribe();
+
+    if (index >= 0) {
+      this.store.dispatch(AddressActions.setDefaultAddress({ index, address }));
+      this.snackBar.open('Default address updated!', 'Close', { duration: 3000 });
+    }
   }
 
   isDefaultAddress(address: Address): boolean {

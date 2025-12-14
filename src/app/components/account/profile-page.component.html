@@ -1,0 +1,89 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>
+      <mat-icon>person</mat-icon>
+      My Account
+    </h1>
+    <p>Manage your profile and preferences</p>
+  </div>
+
+  @if (loading$()) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  } @else {
+    <div class="profile-content">
+      <mat-card class="profile-section">
+        <mat-card-header>
+          <mat-card-title>Personal Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="profileForm" class="profile-form">
+            <mat-form-field appearance="fill">
+              <mat-label>Username</mat-label>
+              <input matInput formControlName="username" readonly />
+              <mat-icon matPrefix>account_circle</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" type="email" readonly />
+              <mat-icon matPrefix>email</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Full Name</mat-label>
+              <input matInput formControlName="fullName" />
+              <mat-icon matPrefix>badge</mat-icon>
+            </mat-form-field>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="profile-section">
+        <mat-card-header>
+          <mat-card-title>Preferences</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="preferencesForm" class="preferences-form">
+            <div class="preference-item">
+              <div class="preference-label">
+                <mat-icon>mail_outline</mat-icon>
+                <div>
+                  <h3>Newsletter Subscription</h3>
+                  <p>Receive updates about new products and offers</p>
+                </div>
+              </div>
+              <mat-slide-toggle formControlName="newsletter" color="primary"></mat-slide-toggle>
+            </div>
+
+            <mat-form-field appearance="fill" class="rating-field">
+              <mat-label>Default Minimum Rating Filter</mat-label>
+              <mat-select formControlName="defaultMinRating">
+                <mat-option [value]="0">All ratings</mat-option>
+                <mat-option [value]="1">1+ stars</mat-option>
+                <mat-option [value]="2">2+ stars</mat-option>
+                <mat-option [value]="3">3+ stars</mat-option>
+                <mat-option [value]="4">4+ stars</mat-option>
+                <mat-option [value]="5">5 stars only</mat-option>
+              </mat-select>
+              <mat-icon matPrefix>star</mat-icon>
+              <mat-hint>Filter products by minimum rating when browsing</mat-hint>
+            </mat-form-field>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <div class="actions">
+        <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!hasChanges()">
+          <mat-icon>save</mat-icon>
+          Save Changes
+        </button>
+        <button mat-button (click)="onCancel()" [disabled]="!hasChanges()">
+          <mat-icon>cancel</mat-icon>
+          Cancel
+        </button>
+      </div>
+    </div>
+  }
+</div>

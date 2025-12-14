@@ -1,14 +1,17 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 import { map, catchError, tap, switchMap } from 'rxjs/operators';
 import { OrderActions } from './order.actions';
 import { CartService, OrderRequest } from '../../cart/services/cart.service';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable()
 export class OrderEffects {
   private actions$ = inject(Actions);
   private cartService = inject(CartService);
+  private http = inject(HttpClient);
 
   createOrder$ = createEffect(() =>
     this.actions$.pipe(
@@ -52,40 +55,27 @@ export class OrderEffects {
     ),
   );
 
-  saveOrderToStorage$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(OrderActions.createOrderSuccess),
-        tap(({ order }) => {
-          const existingOrders = JSON.parse(localStorage.getItem('shopping_orders') || '[]');
-          const updatedOrders = [order, ...existingOrders];
-          localStorage.setItem('shopping_orders', JSON.stringify(updatedOrders));
-        }),
-      ),
-    { dispatch: false },
-  );
-
   loadOrders$ = createEffect(() =>
     this.actions$.pipe(
       ofType(OrderActions.loadOrders),
-      map(() => {
-        const orders = JSON.parse(localStorage.getItem('shopping_orders') || '[]');
-        return OrderActions.loadOrdersSuccess({ orders });
-      }),
-      catchError((error) => of(OrderActions.loadOrdersFailure({ error: error.message }))),
+      switchMap(() =>
+        this.http.get<any[]>(`${environment.apiUrl}/me/orders/`).pipe(
+          map((orders) => OrderActions.loadOrdersSuccess({ orders })),
+          catchError((error) => of(OrderActions.loadOrdersFailure({ error: error.message }))),
+        ),
+      ),
     ),
   );
 
   cancelOrder$ = createEffect(() =>
     this.actions$.pipe(
       ofType(OrderActions.cancelOrder),
-      map(({ orderId }) => {
-        const orders = JSON.parse(localStorage.getItem('shopping_orders') || '[]');
-        const updatedOrders = orders.filter((order: any) => order.orderId !== orderId);
-        localStorage.setItem('shopping_orders', JSON.stringify(updatedOrders));
-        return OrderActions.cancelOrderSuccess({ orderId });
-      }),
-      catchError((error) => of(OrderActions.createOrderFailure({ error: error.message }))),
+      switchMap(({ orderId }) =>
+        this.http.delete(`${environment.apiUrl}/orders/${orderId}/`).pipe(
+          map(() => OrderActions.cancelOrderSuccess({ orderId })),
+          catchError((error) => of(OrderActions.createOrderFailure({ error: error.message }))),
+        ),
+      ),
     ),
   );
 

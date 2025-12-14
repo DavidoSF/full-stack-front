@@ -6,6 +6,7 @@ import { cartReducer } from '../components/shop-page/cart/state/cart.reducer';
 import { wishlistReducer } from '../components/shop-page/wishlist/state/wishlist.reducer';
 import { orderReducer } from '../components/shop-page/orders/state/order.reducer';
 import { addressReducer } from '../components/shop-page/address/state/address.reducer';
+import { reviewsReducer } from '../components/shop-page/reviews/state/reviews.reducer';
 
 export const appReducer: ActionReducerMap<AppState> = {
   product: productReducer,
@@ -14,4 +15,5 @@ export const appReducer: ActionReducerMap<AppState> = {
   wishlist: wishlistReducer,
   order: orderReducer,
   address: addressReducer,
+  reviews: reviewsReducer,
 };

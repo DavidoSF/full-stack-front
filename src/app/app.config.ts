@@ -19,6 +19,7 @@ import { CartEffects } from './components/shop-page/cart/state/cart.effects';
 import { WishlistEffects } from './components/shop-page/wishlist/state/wishlist.effects';
 import { OrderEffects } from './components/shop-page/orders/state/order.effects';
 import { AddressEffects } from './components/shop-page/address/state/address.effects';
+import { ReviewsEffects } from './components/shop-page/reviews/state/reviews.effects';
 import { AppEffects } from './store/app.effects';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -42,6 +43,7 @@ export const appConfig: ApplicationConfig = {
       WishlistEffects,
       OrderEffects,
       AddressEffects,
+      ReviewsEffects,
     ]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     provideAnimationsAsync(),

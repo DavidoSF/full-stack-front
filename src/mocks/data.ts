@@ -14,7 +14,7 @@ export const products: Product[] = [
     price: 2.5,
     created_at: '2025-01-10T10:00:00Z',
     owner_id: 10,
-    ratings: [{ user_id: 2, value: 4 }],
+    ratings: [],
   },
   {
     id: 2,
@@ -22,7 +22,7 @@ export const products: Product[] = [
     price: 3.9,
     created_at: '2025-02-01T09:30:00Z',
     owner_id: 11,
-    ratings: [{ user_id: 3, value: 5 }],
+    ratings: [],
   },
 
   {
@@ -31,7 +31,7 @@ export const products: Product[] = [
     price: 4.5,
     created_at: '2025-02-12T12:00:00Z',
     owner_id: 12,
-    ratings: [{ user_id: 4, value: 3 }],
+    ratings: [],
   },
   {
     id: 4,
@@ -39,7 +39,7 @@ export const products: Product[] = [
     price: 1.2,
     created_at: '2025-03-01T08:45:00Z',
     owner_id: 13,
-    ratings: [{ user_id: 2, value: 5 }],
+    ratings: [],
   },
   {
     id: 5,
@@ -47,7 +47,7 @@ export const products: Product[] = [
     price: 1.5,
     created_at: '2025-03-05T07:20:00Z',
     owner_id: 14,
-    ratings: [{ user_id: 1, value: 4 }],
+    ratings: [],
   },
   {
     id: 6,
@@ -55,7 +55,7 @@ export const products: Product[] = [
     price: 0.9,
     created_at: '2025-03-10T14:10:00Z',
     owner_id: 15,
-    ratings: [{ user_id: 3, value: 4 }],
+    ratings: [],
   },
   {
     id: 7,
@@ -63,7 +63,7 @@ export const products: Product[] = [
     price: 1.7,
     created_at: '2025-03-11T11:00:00Z',
     owner_id: 16,
-    ratings: [{ user_id: 6, value: 5 }],
+    ratings: [],
   },
   {
     id: 8,
@@ -71,7 +71,7 @@ export const products: Product[] = [
     price: 0.3,
     created_at: '2025-03-12T09:00:00Z',
     owner_id: 17,
-    ratings: [{ user_id: 3, value: 3 }],
+    ratings: [],
   },
   {
     id: 9,
@@ -79,7 +79,7 @@ export const products: Product[] = [
     price: 2.0,
     created_at: '2025-03-15T10:30:00Z',
     owner_id: 18,
-    ratings: [{ user_id: 5, value: 4 }],
+    ratings: [],
   },
   {
     id: 10,
@@ -87,7 +87,7 @@ export const products: Product[] = [
     price: 3.0,
     created_at: '2025-03-20T16:00:00Z',
     owner_id: 19,
-    ratings: [{ user_id: 7, value: 5 }],
+    ratings: [],
   },
   {
     id: 11,
@@ -95,7 +95,7 @@ export const products: Product[] = [
     price: 4.0,
     created_at: '2025-03-22T12:40:00Z',
     owner_id: 20,
-    ratings: [{ user_id: 2, value: 4 }],
+    ratings: [],
   },
   {
     id: 12,
@@ -103,7 +103,7 @@ export const products: Product[] = [
     price: 6.5,
     created_at: '2025-03-25T13:00:00Z',
     owner_id: 21,
-    ratings: [{ user_id: 8, value: 5 }],
+    ratings: [],
   },
   {
     id: 13,
@@ -111,7 +111,7 @@ export const products: Product[] = [
     price: 1.3,
     created_at: '2025-04-01T07:00:00Z',
     owner_id: 10,
-    ratings: [{ user_id: 9, value: 3 }],
+    ratings: [],
   },
   {
     id: 14,
@@ -119,7 +119,7 @@ export const products: Product[] = [
     price: 2.8,
     created_at: '2025-04-03T08:00:00Z',
     owner_id: 11,
-    ratings: [{ user_id: 1, value: 4 }],
+    ratings: [],
   },
   {
     id: 15,
@@ -127,7 +127,7 @@ export const products: Product[] = [
     price: 2.5,
     created_at: '2025-04-05T10:20:00Z',
     owner_id: 12,
-    ratings: [{ user_id: 3, value: 5 }],
+    ratings: [],
   },
   {
     id: 16,
@@ -135,7 +135,7 @@ export const products: Product[] = [
     price: 7.9,
     created_at: '2025-04-10T14:00:00Z',
     owner_id: 13,
-    ratings: [{ user_id: 6, value: 4 }],
+    ratings: [],
   },
   {
     id: 17,
@@ -143,7 +143,7 @@ export const products: Product[] = [
     price: 2.2,
     created_at: '2025-04-12T12:30:00Z',
     owner_id: 14,
-    ratings: [{ user_id: 5, value: 3 }],
+    ratings: [],
   },
   {
     id: 18,
@@ -151,7 +151,7 @@ export const products: Product[] = [
     price: 9.5,
     created_at: '2025-04-15T11:10:00Z',
     owner_id: 15,
-    ratings: [{ user_id: 8, value: 5 }],
+    ratings: [],
   },
   {
     id: 19,
@@ -159,7 +159,7 @@ export const products: Product[] = [
     price: 3.4,
     created_at: '2025-04-18T09:40:00Z',
     owner_id: 16,
-    ratings: [{ user_id: 2, value: 4 }],
+    ratings: [],
   },
   {
     id: 20,
@@ -167,13 +167,6 @@ export const products: Product[] = [
     price: 5.0,
     created_at: '2025-04-20T15:00:00Z',
     owner_id: 17,
-    ratings: [
-      { user_id: 9, value: 4 },
-      { user_id: 4, value: 5 },
-      { user_id: 1, value: 3 },
-      { user_id: 6, value: 4 },
-      { user_id: 7, value: 5 },
-      { user_id: 3, value: 5 },
-    ],
+    ratings: [],
   },
 ];

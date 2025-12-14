@@ -104,6 +104,57 @@ export const handlers = [
     );
   }),
 
+  // Product reviews: GET /api/products/:id/reviews/ -> list of reviews
+  http.get(`${API}/products/:id/reviews/`, async ({ params }) => {
+    const productId = Number(params['id']);
+    const reviewsKey = `msw_reviews_${productId}`;
+
+    const reviews =
+      typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem(reviewsKey) || '[]') : [];
+
+    return HttpResponse.json(reviews, { status: 200 });
+  }),
+
+  // Submit review: POST /api/products/:id/reviews/ -> create new review
+  http.post(`${API}/products/:id/reviews/`, async ({ request, params }) => {
+    const productId = Number(params['id']);
+    const body = (await request.json()) as any;
+
+    const currentUser =
+      typeof window !== 'undefined'
+        ? JSON.parse(sessionStorage.getItem('msw_current_user') || '{}')
+        : { id: 'user-123', username: 'guest' };
+
+    const reviewsKey = `msw_reviews_${productId}`;
+    const reviews =
+      typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem(reviewsKey) || '[]') : [];
+
+    const newReview = {
+      id: `review-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      productId,
+      userId: currentUser.id || 'user-123',
+      username: currentUser.username || 'Guest',
+      rating: body.rating,
+      comment: body.comment,
+      createdAt: new Date().toISOString(),
+    };
+
+    reviews.unshift(newReview);
+
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(reviewsKey, JSON.stringify(reviews));
+    }
+
+    const product = products.find((p) => p.id === productId);
+    if (product) {
+      const uniqueUserId = Date.now() + Math.floor(Math.random() * 1000);
+
+      product.ratings.push({ user_id: uniqueUserId, value: body.rating });
+    }
+
+    return HttpResponse.json(newReview, { status: 201 });
+  }),
+
   // Cart validation: POST /api/cart/validate/ -> price summary
   http.post(`${API}/cart/validate/`, async ({ request }) => {
     const body = (await request.json()) as any;

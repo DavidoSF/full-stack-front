@@ -17,7 +17,7 @@
       <mat-card-content>
         <form [formGroup]="addressForm" (ngSubmit)="saveAddress()">
           <div class="form-row">
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="fill">
               <mat-label>First Name</mat-label>
               <input matInput formControlName="firstName" required />
               <mat-error *ngIf="addressForm.get('firstName')?.hasError('required')">
@@ -25,7 +25,7 @@
               </mat-error>
             </mat-form-field>
 
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="fill">
               <mat-label>Last Name</mat-label>
               <input matInput formControlName="lastName" required />
               <mat-error *ngIf="addressForm.get('lastName')?.hasError('required')">
@@ -35,7 +35,7 @@
           </div>
 
           <div class="form-row">
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="fill">
               <mat-label>Email</mat-label>
               <input matInput type="email" formControlName="email" required />
               <mat-error *ngIf="addressForm.get('email')?.hasError('required')">
@@ -46,7 +46,7 @@
               </mat-error>
             </mat-form-field>
 
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="fill">
               <mat-label>Phone</mat-label>
               <input matInput type="tel" formControlName="phone" required />
               <mat-error *ngIf="addressForm.get('phone')?.hasError('required')">
@@ -55,7 +55,7 @@
             </mat-form-field>
           </div>
 
-          <mat-form-field appearance="outline" class="full-width">
+          <mat-form-field appearance="fill" class="full-width">
             <mat-label>Street Address</mat-label>
             <input matInput formControlName="street" required />
             <mat-error *ngIf="addressForm.get('street')?.hasError('required')">
@@ -64,7 +64,7 @@
           </mat-form-field>
 
           <div class="form-row">
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="fill">
               <mat-label>City</mat-label>
               <input matInput formControlName="city" required />
               <mat-error *ngIf="addressForm.get('city')?.hasError('required')">
@@ -72,7 +72,7 @@
               </mat-error>
             </mat-form-field>
 
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="fill">
               <mat-label>Postal Code</mat-label>
               <input matInput formControlName="postalCode" required />
               <mat-error *ngIf="addressForm.get('postalCode')?.hasError('required')">
@@ -80,7 +80,7 @@
               </mat-error>
             </mat-form-field>
 
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="fill">
               <mat-label>Country</mat-label>
               <input matInput formControlName="country" required />
               <mat-error *ngIf="addressForm.get('country')?.hasError('required')">

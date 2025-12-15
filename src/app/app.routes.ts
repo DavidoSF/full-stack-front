@@ -33,6 +33,10 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./components/account/account.routes').then((m) => m.accountRoutes),
       },
+      {
+        path: 'admin',
+        loadChildren: () => import('./components/admin/admin.routes').then((m) => m.adminRoutes),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

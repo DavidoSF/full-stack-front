@@ -22,6 +22,7 @@ import { AddressEffects } from './components/shop-page/address/state/address.eff
 import { ReviewsEffects } from './components/shop-page/reviews/state/reviews.effects';
 import { AppEffects } from './store/app.effects';
 import { ConfigEffects } from './store/config/config.effects';
+import { AdminEffects } from './store/admin/admin.effects';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { httpTokenInterceptor } from './interceptors/http-interceptor';
@@ -46,6 +47,7 @@ export const appConfig: ApplicationConfig = {
       AddressEffects,
       ReviewsEffects,
       ConfigEffects,
+      AdminEffects,
     ]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     provideAnimationsAsync(),

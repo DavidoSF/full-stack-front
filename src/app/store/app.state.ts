@@ -6,6 +6,7 @@ import { OrderState } from '../components/shop-page/orders/state/order.state';
 import { AddressState } from '../components/shop-page/address/state/address.state';
 import { ReviewsState } from '../components/shop-page/reviews/state/reviews.state';
 import { ConfigState } from './config/config.state';
+import { AdminState } from './admin/admin.state';
 
 export interface AppState {
   product: ProductState;
@@ -16,4 +17,5 @@ export interface AppState {
   address: AddressState;
   reviews: ReviewsState;
   config: ConfigState;
+  admin: AdminState;
 }

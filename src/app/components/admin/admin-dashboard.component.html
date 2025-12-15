@@ -1,0 +1,131 @@
+<div class="admin-dashboard">
+  <h1 class="dashboard-title">Admin Dashboard</h1>
+
+  @if (loading$ | async) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Loading dashboard data...</p>
+    </div>
+  }
+
+  @if (error$ | async; as error) {
+    <mat-card class="error-card">
+      <mat-icon color="warn">error</mat-icon>
+      <p>{{ error }}</p>
+    </mat-card>
+  }
+
+  @if (stats$ | async; as stats) {
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <div class="stat-icon-wrapper orders">
+          <mat-icon>shopping_bag</mat-icon>
+        </div>
+        <div class="stat-content">
+          <h3>Total Orders</h3>
+          <p class="stat-value">{{ stats.totalOrders | number }}</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-icon-wrapper revenue">
+          <mat-icon>euro</mat-icon>
+        </div>
+        <div class="stat-content">
+          <h3>Total Revenue</h3>
+          <p class="stat-value">{{ formatCurrency(stats.totalRevenue) }}</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-icon-wrapper products">
+          <mat-icon>inventory_2</mat-icon>
+        </div>
+        <div class="stat-content">
+          <h3>Products Sold</h3>
+          <p class="stat-value">{{ stats.totalProductsSold || 0 | number }}</p>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <div class="stat-icon-wrapper users">
+          <mat-icon>people</mat-icon>
+        </div>
+        <div class="stat-content">
+          <h3>Total Users</h3>
+          <p class="stat-value">{{ stats.totalUsers | number }}</p>
+        </div>
+      </mat-card>
+    </div>
+
+    <mat-card class="section-card">
+      <h2 class="section-title">
+        <mat-icon>trending_up</mat-icon>
+        Top Selling Products
+      </h2>
+      <div class="products-list">
+        @for (product of stats.topProducts; track product.productId) {
+          <div class="product-item">
+            <div class="product-info">
+              <h4>{{ product.name }}</h4>
+              <p class="product-meta">
+                <span
+                  ><strong>{{ product.sold }}</strong> units sold</span
+                >
+                <span class="revenue">{{ formatCurrency(product.revenue) }}</span>
+              </p>
+            </div>
+          </div>
+        } @empty {
+          <p class="empty-message">No product data available</p>
+        }
+      </div>
+    </mat-card>
+
+    <mat-card class="section-card">
+      <h2 class="section-title">
+        <mat-icon>receipt_long</mat-icon>
+        Recent Orders
+      </h2>
+      <div class="table-container">
+        <table mat-table [dataSource]="stats.recentOrders" class="orders-table">
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>Order ID</th>
+            <td mat-cell *matCellDef="let order">{{ order.id }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="user">
+            <th mat-header-cell *matHeaderCellDef>User</th>
+            <td mat-cell *matCellDef="let order">{{ order.user }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="total">
+            <th mat-header-cell *matHeaderCellDef>Total</th>
+            <td mat-cell *matCellDef="let order">{{ formatCurrency(order.total) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let order">{{ formatDate(order.createdAt) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let order">
+              <span class="status-badge" [style.background-color]="getStatusColor(order.status)">
+                {{ order.status }}
+              </span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+
+        @if (stats.recentOrders.length === 0) {
+          <p class="empty-message">No recent orders</p>
+        }
+      </div>
+    </mat-card>
+  }
+</div>

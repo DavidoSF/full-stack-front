@@ -8,6 +8,7 @@ import { orderReducer } from '../components/shop-page/orders/state/order.reducer
 import { addressReducer } from '../components/shop-page/address/state/address.reducer';
 import { reviewsReducer } from '../components/shop-page/reviews/state/reviews.reducer';
 import { configReducer } from './config/config.reducer';
+import { adminReducer } from './admin/admin.reducer';
 
 export const appReducer: ActionReducerMap<AppState> = {
   product: productReducer,
@@ -18,4 +19,5 @@ export const appReducer: ActionReducerMap<AppState> = {
   address: addressReducer,
   reviews: reviewsReducer,
   config: configReducer,
+  admin: adminReducer,
 };

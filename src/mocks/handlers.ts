@@ -461,9 +461,13 @@ export const handlers = [
 
     if (typeof window !== 'undefined') {
       const ordersKey = `msw_orders_${currentUser.id || 'user-123'}`;
-      const existingOrders = JSON.parse(sessionStorage.getItem(ordersKey) || '[]');
+      const existingOrders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
       existingOrders.unshift(newOrder);
-      sessionStorage.setItem(ordersKey, JSON.stringify(existingOrders));
+      localStorage.setItem(ordersKey, JSON.stringify(existingOrders));
+      console.log(
+        `[MSW Order] Saved order to ${ordersKey}. Total orders: ${existingOrders.length}`,
+      );
+      console.log('[MSW Order] Order details:', newOrder);
     }
 
     return HttpResponse.json(
@@ -708,7 +712,7 @@ export const handlers = [
 
     const ordersKey = `msw_orders_${currentUser.id || 'user-123'}`;
     const orders =
-      typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem(ordersKey) || '[]') : [];
+      typeof window !== 'undefined' ? JSON.parse(localStorage.getItem(ordersKey) || '[]') : [];
 
     const transformedOrders = orders.map((order: any) => ({
       orderId: order.order_id,
@@ -752,7 +756,7 @@ export const handlers = [
 
     const ordersKey = `msw_orders_${currentUser.id || 'user-123'}`;
     const orders =
-      typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem(ordersKey) || '[]') : [];
+      typeof window !== 'undefined' ? JSON.parse(localStorage.getItem(ordersKey) || '[]') : [];
 
     const order = orders.find((o: any) => o.order_id === orderId);
 
@@ -808,7 +812,7 @@ export const handlers = [
 
     const ordersKey = `msw_orders_${currentUser.id || 'user-123'}`;
     const orders =
-      typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem(ordersKey) || '[]') : [];
+      typeof window !== 'undefined' ? JSON.parse(localStorage.getItem(ordersKey) || '[]') : [];
 
     const cancelledOrder = orders.find((o: any) => o.order_id === orderId);
     if (cancelledOrder && cancelledOrder.items) {
@@ -823,7 +827,7 @@ export const handlers = [
     const updatedOrders = orders.filter((o: any) => o.order_id !== orderId);
 
     if (typeof window !== 'undefined') {
-      sessionStorage.setItem(ordersKey, JSON.stringify(updatedOrders));
+      localStorage.setItem(ordersKey, JSON.stringify(updatedOrders));
     }
 
     return HttpResponse.json({ message: 'Order cancelled successfully' }, { status: 200 });
@@ -849,5 +853,109 @@ export const handlers = [
     }
 
     return HttpResponse.json({ wishlist: updatedWishlist }, { status: 200 });
+  }),
+
+  // Admin stats: GET /api/admin/stats/ -> dashboard statistics
+  http.get(`${API}/admin/stats/`, async () => {
+    let totalOrders = 0;
+    let totalRevenue = 0;
+    let totalProductsSold = 0;
+    const uniqueUsers = new Set<string>();
+    const productSales: Record<string, { name: string; sold: number; revenue: number }> = {};
+    const recentOrdersList: any[] = [];
+
+    console.log('debg;  Fetching admin statistics...');
+
+    if (typeof window !== 'undefined') {
+      console.log('debg;  LocalStorage length:', localStorage.length);
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        console.log('debg;  Checking key:', key);
+
+        if (key && key.startsWith('msw_orders_')) {
+          const userId = key.replace('msw_orders_', '');
+          uniqueUsers.add(userId);
+
+          const orders = JSON.parse(localStorage.getItem(key) || '[]');
+          console.log(`[MSW Admin Stats] Found ${orders.length} orders for user ${userId}`);
+          totalOrders += orders.length;
+
+          orders.forEach((order: any) => {
+            totalRevenue += order.total || 0;
+
+            let userName = 'Unknown User';
+            if (order.user_id) {
+              const currentUser = JSON.parse(localStorage.getItem('msw_current_user') || '{}');
+              if (currentUser.id === order.user_id) {
+                userName = currentUser.email || currentUser.username || order.user_id;
+              } else {
+                userName = order.user_id;
+              }
+            }
+
+            if (order.items && Array.isArray(order.items)) {
+              order.items.forEach((item: any) => {
+                const productId = String(item.product_id || item.productId);
+                const quantity = item.quantity || 1;
+                const itemPrice = item.price || 0;
+
+                totalProductsSold += quantity;
+
+                const product = products.find((p) => p.id === Number(productId));
+                if (product) {
+                  if (!productSales[productId]) {
+                    productSales[productId] = { name: product.name, sold: 0, revenue: 0 };
+                  }
+                  productSales[productId].sold += quantity;
+                  productSales[productId].revenue += itemPrice * quantity;
+                }
+              });
+            }
+
+            recentOrdersList.push({
+              id: order.order_id || order.orderId,
+              user: userName,
+              total: order.total || 0,
+              createdAt: order.created_at || new Date().toISOString(),
+              status: order.status || 'pending',
+            });
+          });
+        }
+      }
+
+      if (localStorage.getItem('msw_current_user')) {
+        const currentUser = JSON.parse(localStorage.getItem('msw_current_user') || '{}');
+        if (currentUser.id) {
+          uniqueUsers.add(currentUser.id);
+        }
+      }
+    }
+
+    const topProducts = Object.entries(productSales)
+      .map(([productId, data]) => ({
+        productId,
+        name: data.name,
+        sold: data.sold,
+        revenue: data.revenue,
+      }))
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 5);
+
+    const recentOrders = recentOrdersList
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 10);
+
+    const stats = {
+      totalUsers: uniqueUsers.size,
+      totalOrders,
+      totalRevenue,
+      totalProductsSold,
+      topProducts,
+      recentOrders,
+    };
+
+    console.log('debg;  Returning stats:', stats);
+    return HttpResponse.json(stats, { status: 200 });
   }),
 ];

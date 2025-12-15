@@ -56,12 +56,14 @@
 
       @if (isLoggedIn()) {
         <button mat-button [matMenuTriggerFor]="userMenu" class="profile-btn">
-          <div class="profile-avatar">
-            <mat-icon>person</mat-icon>
-          </div>
-          <div class="profile-info">
-            <span class="profile-name">{{ userName() }}</span>
-            <mat-icon class="chevron">expand_more</mat-icon>
+          <div style="display: flex; gap: 4px">
+            <div class="profile-avatar">
+              <mat-icon>person</mat-icon>
+            </div>
+            <div class="profile-info">
+              <span class="profile-name">{{ userName() }}</span>
+              <mat-icon class="chevron">expand_more</mat-icon>
+            </div>
           </div>
         </button>
         <mat-menu #userMenu="matMenu" class="modern-menu">

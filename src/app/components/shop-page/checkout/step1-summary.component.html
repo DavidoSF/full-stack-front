@@ -13,15 +13,58 @@
     </div>
   </div>
 
+  <div class="promo-section" *ngIf="hasPromoApplied$ | async">
+    <h3>Active Promotions</h3>
+    <div class="applied-promos">
+      <div class="promo-badge" *ngFor="let promo of appliedPromos$ | async">
+        <mat-icon>celebration</mat-icon>
+        <span>{{ promo }}</span>
+      </div>
+    </div>
+    <p class="promo-info">Promotions are automatically applied based on your cart items!</p>
+  </div>
+
   <div class="summary-section">
     <div class="summary-line">
-      <span>Subtotal:</span>
+      <span>Items Total:</span>
       <span>{{ subtotal$ | async | currency: 'EUR' }}</span>
     </div>
+
     <div class="summary-line discount" *ngIf="(discount$ | async)! > 0">
-      <span>Discount ({{ couponCode$ | async }}):</span>
-      -{{ ((subtotal$ | async)! * (discount$ | async)!) / 100 | currency: 'EUR' }}
+      <span>Coupon Discount ({{ couponCode$ | async }}):</span>
+      <span class="discount-amount"
+        >-{{ ((subtotal$ | async)! * (discount$ | async)!) / 100 | currency: 'EUR' }}</span
+      >
     </div>
+
+    <div class="summary-line discount" *ngIf="(promoDiscount$ | async)! > 0">
+      <span>Promo Discount:</span>
+      <span class="discount-amount">-{{ promoDiscount$ | async | currency: 'EUR' }}</span>
+    </div>
+
+    <div class="summary-line">
+      <span>Shipping:</span>
+      <span [class.free-shipping]="(shipping$ | async) === 0">
+        {{
+          (shipping$ | async) === 0
+            ? 'FREE'
+            : (shipping$ | async) !== 0
+              ? (shipping$ | async | currency: 'EUR')
+              : (((subtotal$ | async)! > 50 ? 0 : 5.99) | currency: 'EUR')
+        }}
+      </span>
+    </div>
+
+    <div class="summary-line">
+      <span>Taxes (20%):</span>
+      <span>{{
+        (taxes$ | async) !== 0
+          ? (taxes$ | async | currency: 'EUR')
+          : (((subtotal$ | async)! - ((subtotal$ | async)! * (discount$ | async)!) / 100) * 0.2
+            | currency: 'EUR')
+      }}</span>
+    </div>
+
     <div class="summary-line total">
       <strong>Total:</strong>
       <strong>{{ total$ | async | currency: 'EUR' }}</strong>

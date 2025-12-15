@@ -5,6 +5,11 @@ export interface Product {
   created_at: string;
   owner_id: number;
   ratings: { user_id: number; value: number }[];
+  promo?: {
+    type: 'percentage' | 'free_shipping';
+    value?: number;
+    label: string;
+  };
 }
 
 export const products: Product[] = [
@@ -15,6 +20,11 @@ export const products: Product[] = [
     created_at: '2025-01-10T10:00:00Z',
     owner_id: 10,
     ratings: [],
+    promo: {
+      type: 'percentage',
+      value: 10,
+      label: '10% OFF',
+    },
   },
   {
     id: 2,
@@ -32,6 +42,10 @@ export const products: Product[] = [
     created_at: '2025-02-12T12:00:00Z',
     owner_id: 12,
     ratings: [],
+    promo: {
+      type: 'free_shipping',
+      label: 'FREE SHIPPING',
+    },
   },
   {
     id: 4,
@@ -120,6 +134,10 @@ export const products: Product[] = [
     created_at: '2025-04-03T08:00:00Z',
     owner_id: 11,
     ratings: [],
+    promo: {
+      type: 'free_shipping',
+      label: 'FREE SHIPPING',
+    },
   },
   {
     id: 15,
@@ -160,6 +178,11 @@ export const products: Product[] = [
     created_at: '2025-04-18T09:40:00Z',
     owner_id: 16,
     ratings: [],
+    promo: {
+      type: 'percentage',
+      value: 10,
+      label: '10% OFF',
+    },
   },
   {
     id: 20,

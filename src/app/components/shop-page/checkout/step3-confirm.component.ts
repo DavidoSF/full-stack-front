@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, takeUntil, take } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Address } from '../models/address.model';
 import { CartItem } from '../models/cart-item.model';
@@ -13,6 +13,11 @@ import {
   selectCartSubtotal,
   selectCartDiscount,
   selectCartCouponCode,
+  selectPromoCode,
+  selectPromoDiscount,
+  selectShipping,
+  selectTaxes,
+  selectAppliedPromos,
 } from '../cart/state/cart.selectors';
 import { CartActions } from '../cart/state/cart.actions';
 import { OrderActions } from '../orders/state/order.actions';
@@ -31,6 +36,11 @@ export class Step3ConfirmComponent implements OnInit, OnDestroy {
   subtotal$!: Observable<number>;
   discount$!: Observable<number>;
   couponCode$!: Observable<string | undefined>;
+  promoCode$!: Observable<string | undefined>;
+  promoDiscount$!: Observable<number>;
+  shipping$!: Observable<number>;
+  taxes$!: Observable<number>;
+  appliedPromos$!: Observable<string[]>;
   loading$!: Observable<boolean>;
   address: Address | null = null;
   private destroy$ = new Subject<void>();
@@ -47,6 +57,11 @@ export class Step3ConfirmComponent implements OnInit, OnDestroy {
     this.subtotal$ = this.store.select(selectCartSubtotal);
     this.discount$ = this.store.select(selectCartDiscount);
     this.couponCode$ = this.store.select(selectCartCouponCode);
+    this.promoCode$ = this.store.select(selectPromoCode);
+    this.promoDiscount$ = this.store.select(selectPromoDiscount);
+    this.shipping$ = this.store.select(selectShipping);
+    this.taxes$ = this.store.select(selectTaxes);
+    this.appliedPromos$ = this.store.select(selectAppliedPromos);
     this.loading$ = this.store.select(selectOrderLoading);
 
     const addressData = localStorage.getItem('checkout_address');
@@ -96,26 +111,43 @@ export class Step3ConfirmComponent implements OnInit, OnDestroy {
     let total = 0;
     let discount = 0;
     let couponCode: string | undefined;
+    let promoCode: string | undefined;
+    let promoDiscount = 0;
+    let shipping = 0;
+    let taxes = 0;
+    let appliedPromos: string[] = [];
 
-    this.cartItems$.pipe(takeUntil(this.destroy$)).subscribe((i) => (items = i));
-    this.subtotal$.pipe(takeUntil(this.destroy$)).subscribe((s) => (subtotal = s));
-    this.total$.pipe(takeUntil(this.destroy$)).subscribe((t) => (total = t));
-    this.discount$.pipe(takeUntil(this.destroy$)).subscribe((d) => (discount = d));
-    this.couponCode$.pipe(takeUntil(this.destroy$)).subscribe((c) => (couponCode = c));
+    this.cartItems$.pipe(take(1)).subscribe((i) => (items = i));
+    this.subtotal$.pipe(take(1)).subscribe((s) => (subtotal = s));
+    this.total$.pipe(take(1)).subscribe((t) => (total = t));
+    this.discount$.pipe(take(1)).subscribe((d) => (discount = d));
+    this.couponCode$.pipe(take(1)).subscribe((c) => (couponCode = c));
+    this.promoCode$.pipe(take(1)).subscribe((p) => (promoCode = p));
+    this.promoDiscount$.pipe(take(1)).subscribe((p) => (promoDiscount = p));
+    this.shipping$.pipe(take(1)).subscribe((s) => (shipping = s));
+    this.taxes$.pipe(take(1)).subscribe((t) => (taxes = t));
+    this.appliedPromos$.pipe(take(1)).subscribe((a) => (appliedPromos = a));
 
-    const shipping = 5.99;
-    const tax = total * 0.1;
-    const finalTotal = total + shipping + tax;
+    const finalShipping = appliedPromos.length > 0 ? shipping : subtotal > 50 ? 0 : 5.99;
+    const finalTaxes =
+      appliedPromos.length > 0 ? taxes : (subtotal - (discount * subtotal) / 100) * 0.2;
+    const finalTotal =
+      appliedPromos.length > 0
+        ? total
+        : subtotal - (discount * subtotal) / 100 + finalShipping + finalTaxes;
 
     const order: Order = {
       items,
       shippingAddress: this.address,
       subtotal,
-      tax,
-      shipping,
+      tax: finalTaxes,
+      shipping: finalShipping,
       total: finalTotal,
       couponCode,
       discount,
+      promoCode,
+      promoDiscount,
+      appliedPromos,
     };
 
     this.store.dispatch(OrderActions.createOrder({ order }));

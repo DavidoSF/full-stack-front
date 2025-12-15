@@ -12,6 +12,9 @@ export interface Order {
   total: number;
   couponCode?: string;
   discount?: number;
+  promoCode?: string;
+  promoDiscount?: number;
+  appliedPromos?: string[];
   status?: string;
   createdAt?: string;
   estimatedDelivery?: string;

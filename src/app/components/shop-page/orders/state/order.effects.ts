@@ -32,8 +32,15 @@ export class OrderEffects {
             postal_code: order.shippingAddress.postalCode,
             country: order.shippingAddress.country,
           },
+          subtotal: order.subtotal,
+          shipping: order.shipping,
+          tax: order.tax,
           total: order.total,
+          discount: order.discount,
           coupon_code: order.couponCode,
+          promo_code: order.promoCode,
+          promo_discount: order.promoDiscount,
+          applied_promos: order.appliedPromos,
         };
 
         return this.cartService.createOrder(orderRequest).pipe(

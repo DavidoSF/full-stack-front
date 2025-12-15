@@ -12,6 +12,17 @@
   <div class="product-details" *ngIf="product && !loading">
     <div class="product-image">
       <img src="assets/placeholder.png" [alt]="product.name" />
+      <div
+        class="promo-badge"
+        *ngIf="product.promo"
+        [class.promo-percentage]="product.promo.type === 'percentage'"
+        [class.promo-shipping]="product.promo.type === 'free_shipping'"
+      >
+        <mat-icon class="promo-icon">{{
+          product.promo.type === 'percentage' ? 'local_offer' : 'local_shipping'
+        }}</mat-icon>
+        <span>{{ product.promo.label }}</span>
+      </div>
     </div>
 
     <div class="product-info">

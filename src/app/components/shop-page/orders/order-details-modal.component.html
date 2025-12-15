@@ -125,21 +125,32 @@
   <div class="summary-section">
     <h3>Order Summary</h3>
     <div class="summary-line">
-      <span>Subtotal:</span>
+      <span>Items Total:</span>
       <span>{{ order.subtotal | currency: 'EUR' }}</span>
     </div>
+
     <div class="summary-line" *ngIf="order.discount && order.discount > 0">
-      <span>Discount ({{ order.couponCode }}):</span>
+      <span>Coupon Discount ({{ order.couponCode }}):</span>
       <span class="discount">-{{ order.discount | currency: 'EUR' }}</span>
     </div>
+
+    <div class="summary-line" *ngIf="order.promoDiscount && order.promoDiscount > 0">
+      <span>Promo Discount ({{ order.appliedPromos?.[0] }}):</span>
+      <span class="discount">-{{ order.promoDiscount | currency: 'EUR' }}</span>
+    </div>
+
     <div class="summary-line">
       <span>Shipping:</span>
-      <span>{{ order.shipping | currency: 'EUR' }}</span>
+      <span [class.free-shipping]="order.shipping === 0">
+        {{ order.shipping === 0 ? 'FREE' : (order.shipping | currency: 'EUR') }}
+      </span>
     </div>
+
     <div class="summary-line">
-      <span>Tax:</span>
+      <span>Taxes (20%):</span>
       <span>{{ order.tax | currency: 'EUR' }}</span>
     </div>
+
     <div class="summary-line total">
       <span>Total:</span>
       <span>{{ order.total | currency: 'EUR' }}</span>

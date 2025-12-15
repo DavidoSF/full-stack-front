@@ -119,6 +119,66 @@ export const cartReducer = createReducer(
     loading: false,
     error,
   })),
+
+  on(CartActions.applyPromoCode, (state) => ({ ...state, loading: true, error: null })),
+
+  on(
+    CartActions.applyPromoCodeSuccess,
+    (state, { promoCode, itemsTotal, discount, shipping, taxes, grandTotal, appliedPromos }) => ({
+      ...state,
+      promoCode,
+      promoDiscount: discount,
+      shipping,
+      taxes,
+      totalPrice: grandTotal,
+      appliedPromos,
+      loading: false,
+      error: null,
+    }),
+  ),
+
+  on(CartActions.applyPromoCodeFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
+  })),
+
+  on(CartActions.removePromoCode, (state) => {
+    const subtotal = state.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const discountAmount = state.discount ? subtotal * (state.discount / 100) : 0;
+    const totalPrice = Number((subtotal - discountAmount).toFixed(2));
+
+    return {
+      ...state,
+      promoCode: undefined,
+      promoDiscount: undefined,
+      shipping: undefined,
+      taxes: undefined,
+      appliedPromos: undefined,
+      totalPrice,
+    };
+  }),
+
+  on(
+    CartActions.autoApplyPromoSuccess,
+    (state, { promoCode, itemsTotal, discount, shipping, taxes, grandTotal, appliedPromos }) => ({
+      ...state,
+      promoCode,
+      promoDiscount: discount,
+      shipping,
+      taxes,
+      totalPrice: grandTotal,
+      appliedPromos,
+      loading: false,
+      error: null,
+    }),
+  ),
+
+  on(CartActions.autoApplyPromoFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
+  })),
 );
 
 function calculateTotal(items: CartItem[], discount?: number): number {

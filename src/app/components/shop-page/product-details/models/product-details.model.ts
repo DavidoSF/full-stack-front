@@ -9,4 +9,9 @@ export interface ProductDetails {
   description: string;
   stock: number;
   category: string;
+  promo?: {
+    type: 'percentage' | 'free_shipping';
+    value?: number;
+    label: string;
+  };
 }

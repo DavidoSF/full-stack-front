@@ -34,4 +34,46 @@ export class CartActions {
     '[Cart] Apply Coupon Failure',
     props<{ error: string }>(),
   );
+
+  static applyPromoCode = createAction('[Cart] Apply Promo Code', props<{ promoCode: string }>());
+
+  static applyPromoCodeSuccess = createAction(
+    '[Cart] Apply Promo Code Success',
+    props<{
+      promoCode: string;
+      itemsTotal: number;
+      discount: number;
+      shipping: number;
+      taxes: number;
+      grandTotal: number;
+      appliedPromos: string[];
+    }>(),
+  );
+
+  static applyPromoCodeFailure = createAction(
+    '[Cart] Apply Promo Code Failure',
+    props<{ error: string }>(),
+  );
+
+  static removePromoCode = createAction('[Cart] Remove Promo Code');
+
+  static autoApplyPromo = createAction('[Cart] Auto Apply Promo');
+
+  static autoApplyPromoSuccess = createAction(
+    '[Cart] Auto Apply Promo Success',
+    props<{
+      promoCode: string;
+      itemsTotal: number;
+      discount: number;
+      shipping: number;
+      taxes: number;
+      grandTotal: number;
+      appliedPromos: string[];
+    }>(),
+  );
+
+  static autoApplyPromoFailure = createAction(
+    '[Cart] Auto Apply Promo Failure',
+    props<{ error: string }>(),
+  );
 }

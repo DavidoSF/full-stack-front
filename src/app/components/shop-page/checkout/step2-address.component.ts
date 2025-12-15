@@ -13,6 +13,11 @@ import {
   selectCartTotal,
   selectCartDiscount,
   selectCartCouponCode,
+  selectPromoCode,
+  selectPromoDiscount,
+  selectShipping,
+  selectTaxes,
+  selectAppliedPromos,
 } from '../cart/state/cart.selectors';
 import { selectSavedAddresses, selectDefaultAddress } from '../address/state/address.selectors';
 import { AddressActions } from '../address/state/address.actions';
@@ -30,6 +35,11 @@ export class Step2AddressComponent implements OnInit {
   total$!: Observable<number>;
   discount$!: Observable<number>;
   couponCode$!: Observable<string | undefined>;
+  promoCode$!: Observable<string | undefined>;
+  promoDiscount$!: Observable<number>;
+  shipping$!: Observable<number>;
+  taxes$!: Observable<number>;
+  appliedPromos$!: Observable<string[]>;
   savedAddresses$!: Observable<Address[]>;
   defaultAddress$!: Observable<Address | null>;
   showForm = false;
@@ -57,6 +67,11 @@ export class Step2AddressComponent implements OnInit {
     this.total$ = this.store.select(selectCartTotal);
     this.discount$ = this.store.select(selectCartDiscount);
     this.couponCode$ = this.store.select(selectCartCouponCode);
+    this.promoCode$ = this.store.select(selectPromoCode);
+    this.promoDiscount$ = this.store.select(selectPromoDiscount);
+    this.shipping$ = this.store.select(selectShipping);
+    this.taxes$ = this.store.select(selectTaxes);
+    this.appliedPromos$ = this.store.select(selectAppliedPromos);
     this.savedAddresses$ = this.store.select(selectSavedAddresses);
     this.defaultAddress$ = this.store.select(selectDefaultAddress);
 

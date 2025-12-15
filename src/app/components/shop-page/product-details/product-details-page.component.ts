@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 import { ProductDetailsService } from './services/product-details.service';
 import { ProductDetails } from './models/product-details.model';
 import { selectIsInWishlist } from '../wishlist/state/wishlist.selectors';
@@ -13,7 +14,7 @@ import { WishlistActions } from '../wishlist/state/wishlist.actions';
 @Component({
   selector: 'app-product-details-page',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule],
+  imports: [CommonModule, MatSnackBarModule, MatIconModule],
   templateUrl: './product-details-page.component.html',
   styleUrls: ['./product-details-page.component.scss'],
 })

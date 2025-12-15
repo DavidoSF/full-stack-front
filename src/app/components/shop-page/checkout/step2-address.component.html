@@ -130,13 +130,43 @@
     <div class="order-summary">
       <h3>Order Summary</h3>
       <div class="summary-line">
-        <span>Subtotal:</span>
+        <span>Items Total:</span>
         <span>{{ subtotal$ | async | currency: 'EUR' }}</span>
       </div>
+
       <div class="summary-line discount" *ngIf="(discount$ | async)! > 0">
-        <span>Discount ({{ couponCode$ | async }}):</span>
+        <span>Coupon Discount ({{ couponCode$ | async }}):</span>
         <span>-{{ ((subtotal$ | async)! * (discount$ | async)!) / 100 | currency: 'EUR' }}</span>
       </div>
+
+      <div class="summary-line discount" *ngIf="(promoDiscount$ | async)! > 0">
+        <span>Promo Discount ({{ (appliedPromos$ | async)?.[0] }}):</span>
+        <span>-{{ promoDiscount$ | async | currency: 'EUR' }}</span>
+      </div>
+
+      <div class="summary-line">
+        <span>Shipping:</span>
+        <span [class.free-shipping]="(shipping$ | async) === 0">
+          {{
+            (shipping$ | async) === 0
+              ? 'FREE'
+              : (shipping$ | async) !== 0
+                ? (shipping$ | async | currency: 'EUR')
+                : (((subtotal$ | async)! > 50 ? 0 : 5.99) | currency: 'EUR')
+          }}
+        </span>
+      </div>
+
+      <div class="summary-line">
+        <span>Taxes (20%):</span>
+        <span>{{
+          (taxes$ | async) !== 0
+            ? (taxes$ | async | currency: 'EUR')
+            : (((subtotal$ | async)! - ((subtotal$ | async)! * (discount$ | async)!) / 100) * 0.2
+              | currency: 'EUR')
+        }}</span>
+      </div>
+
       <div class="summary-line total">
         <strong>Total:</strong>
         <strong>{{ total$ | async | currency: 'EUR' }}</strong>

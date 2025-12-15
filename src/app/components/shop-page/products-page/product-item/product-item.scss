@@ -49,6 +49,49 @@
       }
     }
 
+    .promo-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 8px 14px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+      z-index: 2;
+
+      &.promo-percentage {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        color: white;
+
+        .promo-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      &.promo-shipping {
+        background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+        color: white;
+
+        .promo-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      span {
+        font-weight: 700;
+      }
+    }
+
     .rating-badge {
       position: absolute;
       top: 12px;

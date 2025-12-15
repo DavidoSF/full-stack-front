@@ -9,7 +9,7 @@ import { CartItem } from '../models/cart-item.model';
 import {
   selectCartItems,
   selectCartSubtotal,
-  selectCartTotal,
+  selectCartPageTotal,
   selectCartDiscount,
   selectCartCouponCode,
 } from './state/cart.selectors';
@@ -40,7 +40,7 @@ export class CartPageComponent implements OnInit {
   ngOnInit(): void {
     this.cartItems$ = this.store.select(selectCartItems);
     this.subtotal$ = this.store.select(selectCartSubtotal);
-    this.total$ = this.store.select(selectCartTotal);
+    this.total$ = this.store.select(selectCartPageTotal);
     this.discount$ = this.store.select(selectCartDiscount);
     this.couponCode$ = this.store.select(selectCartCouponCode);
   }

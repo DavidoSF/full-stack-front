@@ -99,6 +99,7 @@ export const handlers = [
         description: `Detailed description for ${p.name}`,
         stock: Math.floor(Math.random() * 100) + 10,
         category: 'Office Supplies',
+        promo: p.promo || null,
       },
       { status: 200 },
     );
@@ -177,7 +178,7 @@ export const handlers = [
       };
     });
 
-    const tax = subtotal * 0.2; // 20% tax
+    const tax = subtotal * 0.2;
     const shipping = subtotal > 50 ? 0 : 5.99;
     const total = subtotal + tax + shipping;
 
@@ -189,6 +190,152 @@ export const handlers = [
         shipping: Number(shipping.toFixed(2)),
         total: Number(total.toFixed(2)),
         currency: 'EUR',
+      },
+      { status: 200 },
+    );
+  }),
+
+  // Apply promo code: POST /api/cart/apply-promo/ -> price summary with promo
+  http.post(`${API}/cart/apply-promo/`, async ({ request }) => {
+    const body = (await request.json()) as any;
+    const items = body.items || [];
+    const promoCode = (body.promoCode || '').toUpperCase();
+
+    let itemsTotal = 0;
+    items.forEach((item: any) => {
+      const product = products.find((p) => p.id === item.product_id);
+      const quantity = item.quantity || 1;
+      const price = product ? product.price * quantity : 0;
+      itemsTotal += price;
+    });
+
+    const promoCodes: {
+      [key: string]: {
+        type: 'percentage' | 'freeship' | 'conditional';
+        value?: number;
+        minAmount?: number;
+      };
+    } = {
+      WELCOME10: { type: 'percentage', value: 10 },
+      FREESHIP: { type: 'freeship' },
+      VIP20: { type: 'conditional', value: 20, minAmount: 50 },
+    };
+
+    let discount = 0;
+    let shipping = itemsTotal > 50 ? 0 : 5.99;
+    const appliedPromos: string[] = [];
+
+    if (promoCode && promoCodes[promoCode]) {
+      const promo = promoCodes[promoCode];
+
+      if (promo.type === 'percentage') {
+        discount = itemsTotal * (promo.value! / 100);
+        appliedPromos.push(promoCode);
+      } else if (promo.type === 'freeship') {
+        shipping = 0;
+        appliedPromos.push(promoCode);
+      } else if (promo.type === 'conditional') {
+        if (itemsTotal >= promo.minAmount!) {
+          discount = itemsTotal * (promo.value! / 100);
+          appliedPromos.push(promoCode);
+        } else {
+          return HttpResponse.json(
+            {
+              error: `Promo code ${promoCode} requires a minimum purchase of €${promo.minAmount}`,
+            },
+            { status: 400 },
+          );
+        }
+      }
+    } else if (promoCode) {
+      return HttpResponse.json({ error: 'Invalid promo code' }, { status: 400 });
+    }
+
+    const subtotalAfterDiscount = itemsTotal - discount;
+    const taxes = subtotalAfterDiscount * 0.2; // 20% tax
+    const grandTotal = subtotalAfterDiscount + taxes + shipping;
+
+    return HttpResponse.json(
+      {
+        itemsTotal: Number(itemsTotal.toFixed(2)),
+        discount: Number(discount.toFixed(2)),
+        shipping: Number(shipping.toFixed(2)),
+        taxes: Number(taxes.toFixed(2)),
+        grandTotal: Number(grandTotal.toFixed(2)),
+        appliedPromos,
+      },
+      { status: 200 },
+    );
+  }),
+
+  // Auto-apply promo: POST /api/cart/auto-promo/ -> automatically apply best promo
+  http.post(`${API}/cart/auto-promo/`, async ({ request }) => {
+    const body = (await request.json()) as any;
+    const items = body.items || [];
+
+    let itemsTotal = 0;
+    const cartProductIds: number[] = [];
+    items.forEach((item: any) => {
+      const product = products.find((p) => p.id === item.product_id);
+      const quantity = item.quantity || 1;
+      const price = product ? product.price * quantity : 0;
+      itemsTotal += price;
+      if (product) cartProductIds.push(product.id);
+    });
+
+    let discount = 0;
+    let shipping = itemsTotal > 50 ? 0 : 5.99;
+    const appliedPromos: string[] = [];
+    let promoCode = '';
+
+    const hasPercentagePromo = items.some((item: any) => {
+      const product = products.find((p) => p.id === item.product_id);
+      return product?.promo?.type === 'percentage';
+    });
+
+    const hasFreeShippingPromo = items.some((item: any) => {
+      const product = products.find((p) => p.id === item.product_id);
+      return product?.promo?.type === 'free_shipping';
+    });
+
+    if (hasPercentagePromo) {
+      const promoProduct = products.find(
+        (p) => cartProductIds.includes(p.id) && p.promo?.type === 'percentage',
+      );
+      if (promoProduct?.promo?.value) {
+        discount = itemsTotal * (promoProduct.promo.value / 100);
+        promoCode = 'AUTO10';
+        appliedPromos.push('AUTO10');
+      }
+    }
+
+    if (hasFreeShippingPromo) {
+      shipping = 0;
+      if (!appliedPromos.includes('FREESHIP')) {
+        promoCode = appliedPromos.length > 0 ? `${promoCode}+FREESHIP` : 'FREESHIP';
+        appliedPromos.push('FREESHIP');
+      }
+    }
+
+    if (itemsTotal >= 50 && !hasPercentagePromo) {
+      discount = itemsTotal * 0.2;
+      promoCode = 'VIP20';
+      appliedPromos.push('VIP20');
+    }
+
+    const subtotalAfterDiscount = itemsTotal - discount;
+    const taxes = subtotalAfterDiscount * 0.2;
+    const grandTotal = subtotalAfterDiscount + taxes + shipping;
+
+    return HttpResponse.json(
+      {
+        itemsTotal: Number(itemsTotal.toFixed(2)),
+        discount: Number(discount.toFixed(2)),
+        shipping: Number(shipping.toFixed(2)),
+        taxes: Number(taxes.toFixed(2)),
+        grandTotal: Number(grandTotal.toFixed(2)),
+        appliedPromos,
+        promoCode,
       },
       { status: 200 },
     );
@@ -219,13 +366,11 @@ export const handlers = [
       };
     });
 
-    const itemsSubtotal = enrichedItems.reduce((sum: number, item: any) => {
-      return sum + item.price * item.quantity;
-    }, 0);
-    const discount = body.coupon_code ? itemsSubtotal * 0.1 : 0;
-    const shipping = itemsSubtotal > 50 ? 0 : 5.99;
-    const tax = (itemsSubtotal - discount) * 0.2;
-    const total = itemsSubtotal - discount + shipping + tax;
+    const itemsSubtotal = body.subtotal || 0;
+    const discount = body.discount || 0;
+    const shipping = body.shipping || 0;
+    const tax = body.tax || 0;
+    const total = body.total || 0;
 
     const newOrder = {
       order_id: orderId,
@@ -241,6 +386,9 @@ export const handlers = [
       items: enrichedItems,
       shipping_address: body.shipping_address || {},
       coupon_code: body.coupon_code || null,
+      promo_code: body.promo_code || null,
+      promo_discount: body.promo_discount ? Number(body.promo_discount.toFixed(2)) : 0,
+      applied_promos: body.applied_promos || [],
       user_id: currentUser.id || 'user-123',
     };
 
@@ -518,6 +666,9 @@ export const handlers = [
       discount: order.discount || 0,
       total: order.total || 0,
       couponCode: order.coupon_code || null,
+      promoCode: order.promo_code || null,
+      promoDiscount: order.promo_discount || 0,
+      appliedPromos: order.applied_promos || [],
     }));
 
     return HttpResponse.json(transformedOrders, { status: 200 });
@@ -569,6 +720,9 @@ export const handlers = [
         discount: order.discount || 0,
         total: order.total || 0,
         couponCode: order.coupon_code || null,
+        promoCode: order.promo_code || null,
+        promoDiscount: order.promo_discount || 0,
+        appliedPromos: order.applied_promos || [],
         createdAt: order.created_at,
         estimatedDelivery: order.estimated_delivery,
       },

@@ -35,8 +35,15 @@ export interface OrderRequest {
     postal_code: string;
     country: string;
   };
+  subtotal: number;
+  shipping: number;
+  tax: number;
   total: number;
+  discount?: number;
   coupon_code?: string;
+  promo_code?: string;
+  promo_discount?: number;
+  applied_promos?: string[];
 }
 
 export interface OrderResponse {

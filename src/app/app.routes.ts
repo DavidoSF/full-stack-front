@@ -27,6 +27,16 @@ export const routes: Routes = [
         canActivate: [authGuard],
         loadChildren: () => import('./components/shop-page/shop.routes').then((m) => m.routes),
       },
+      {
+        path: 'account',
+        canActivate: [authGuard],
+        loadChildren: () =>
+          import('./components/account/account.routes').then((m) => m.accountRoutes),
+      },
+      {
+        path: 'admin',
+        loadChildren: () => import('./components/admin/admin.routes').then((m) => m.adminRoutes),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

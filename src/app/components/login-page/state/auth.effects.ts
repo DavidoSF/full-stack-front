@@ -23,8 +23,10 @@ export class AuthEffects {
               response: {
                 access: response.access,
                 refresh: response.refresh,
-                user: {
+                user: response.user || {
                   username: action.request.username,
+                  email: '',
+                  fullName: '',
                 },
               },
             }),
@@ -62,7 +64,8 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
-        tap(() => {
+        tap((action) => {
+          localStorage.setItem('auth_state', JSON.stringify(action.response));
           this.router.navigate(['/shop']);
         }),
       ),
@@ -94,9 +97,38 @@ export class AuthEffects {
       this.actions$.pipe(
         ofType(AuthActions.logout),
         tap(() => {
+          localStorage.removeItem('auth_state');
           this.router.navigate(['/login']);
         }),
       ),
     { dispatch: false },
+  );
+
+  loadAuthFromStorage$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.loadAuthFromStorage),
+      switchMap(() => {
+        const authData = localStorage.getItem('auth_state');
+        if (authData) {
+          const storedAuth = JSON.parse(authData);
+          return this.authService.getCurrentUser().pipe(
+            map((user) =>
+              AuthActions.loadAuthFromStorageSuccess({
+                response: {
+                  access: storedAuth.access,
+                  refresh: storedAuth.refresh,
+                  user: user,
+                },
+              }),
+            ),
+            catchError(() => {
+              return of(AuthActions.loadAuthFromStorageSuccess({ response: storedAuth }));
+            }),
+          );
+        }
+        return of({ type: '[Auth] No Stored Auth' });
+      }),
+      catchError(() => of({ type: '[Auth] Load Storage Failed' })),
+    ),
   );
 }

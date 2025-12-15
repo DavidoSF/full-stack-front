@@ -1,64 +1,144 @@
-<mat-toolbar class="navbar" color="primary">
-  <div class="navbar-container">
-    <div class="navbar-brand">
-      <a routerLink="/app" class="logo-link">
-        <mat-icon class="logo-icon">shopping_bag</mat-icon>
-        <span class="logo-text">MyShop</span>
+<nav class="modern-navbar">
+  <div class="nav-background"></div>
+  <div class="nav-content">
+    <div class="nav-left">
+      <a routerLink="/app" class="brand">
+        <div class="brand-icon">
+          <mat-icon>shopping_cart</mat-icon>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">MyShop</span>
+          <span class="brand-tagline">Premium Store</span>
+        </div>
       </a>
-    </div>
 
-    <nav class="navbar-nav">
-      <a
-        routerLink="/app"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        mat-button
-        class="nav-link"
-      >
-        <mat-icon>home</mat-icon>
-        <span>Home</span>
-      </a>
-      <a routerLink="/shop" routerLinkActive="active" mat-button class="nav-link">
-        <mat-icon>store</mat-icon>
-        <span>Shop</span>
-      </a>
-    </nav>
-
-    <div class="navbar-search">
-      <div class="search-wrapper">
-        <mat-icon class="search-icon">search</mat-icon>
-        <input
-          type="text"
-          class="search-input"
-          placeholder="Search products..."
-          (input)="onSearch($event)"
-        />
+      <div class="nav-links">
+        <a
+          routerLink="/app"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="nav-item"
+        >
+          <mat-icon>home</mat-icon>
+          <span>Home</span>
+        </a>
+        <a routerLink="/shop" routerLinkActive="active" class="nav-item">
+          <mat-icon>storefront</mat-icon>
+          <span>Products</span>
+        </a>
       </div>
     </div>
 
-    <div class="navbar-actions">
-      @if (isLoggedIn()) {
-        <button mat-button [matMenuTriggerFor]="userMenu" class="user-btn">
-          <mat-icon>account_circle</mat-icon>
-          <span class="user-name">{{ userName() }}</span>
-          <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
+    <div class="nav-center">
+      <div class="search-container" #searchContainer>
+        <mat-icon>search</mat-icon>
+        <input
+          type="text"
+          placeholder="What are you looking for?"
+          (input)="onSearch($event)"
+          (focus)="onSearchFocus()"
+          [value]="searchQuery()"
+        />
+        <button mat-icon-button class="search-filter">
+          <mat-icon>tune</mat-icon>
         </button>
-        <mat-menu #userMenu="matMenu" class="user-menu">
-          <button mat-menu-item (click)="onLogout()">
+
+        @if (showSearchDropdown() && filteredProducts().length > 0) {
+          <div class="search-dropdown">
+            <div class="search-results-header">
+              <span>Products ({{ filteredProducts().length }})</span>
+            </div>
+            <div class="search-results">
+              @for (product of filteredProducts(); track product.id) {
+                <div class="search-result-item" (click)="selectProduct(product.id)">
+                  <div class="result-icon">
+                    <mat-icon>shopping_bag</mat-icon>
+                  </div>
+                  <div class="result-content">
+                    <div class="result-name">{{ product.name }}</div>
+                    <div class="result-price">${{ product.price.toFixed(2) }}</div>
+                  </div>
+                  @if (product._avg > 0) {
+                    <div class="result-rating">
+                      <mat-icon>star</mat-icon>
+                      <span>{{ product._avg.toFixed(1) }}</span>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+        @if (
+          showSearchDropdown() && searchQuery().trim().length > 0 && filteredProducts().length === 0
+        ) {
+          <div class="search-dropdown">
+            <div class="no-results">
+              <mat-icon>search_off</mat-icon>
+              <span>No products found</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <button mat-icon-button routerLink="/shop/wishlist" class="icon-btn" matTooltip="My Wishlist">
+        <mat-icon
+          [matBadge]="wishlistCount$ | async"
+          [matBadgeHidden]="(wishlistCount$ | async) === 0"
+          matBadgeColor="warn"
+          matBadgeSize="small"
+          >favorite_border</mat-icon
+        >
+      </button>
+
+      <div class="cart-wrapper">
+        <app-cart-icon [showTooltip]="true"></app-cart-icon>
+      </div>
+
+      @if (isLoggedIn()) {
+        <button mat-button [matMenuTriggerFor]="userMenu" class="profile-btn">
+          <div style="display: flex; gap: 4px">
+            <div class="profile-avatar">
+              <mat-icon>person</mat-icon>
+            </div>
+            <div class="profile-info">
+              <span class="profile-name">{{ userName() }}</span>
+              <mat-icon class="chevron">expand_more</mat-icon>
+            </div>
+          </div>
+        </button>
+        <mat-menu #userMenu="matMenu" class="modern-menu">
+          <div class="menu-header">
+            <mat-icon>account_circle</mat-icon>
+            <span>{{ userName() }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <button mat-menu-item routerLink="/account/profile">
+            <mat-icon>person</mat-icon>
+            <span>My Profile</span>
+          </button>
+          <button mat-menu-item routerLink="/shop/orders">
+            <mat-icon>receipt_long</mat-icon>
+            <span>My Orders</span>
+          </button>
+          <button mat-menu-item routerLink="/shop/address">
+            <mat-icon>place</mat-icon>
+            <span>My Addresses</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="onLogout()" class="logout-item">
             <mat-icon>logout</mat-icon>
-            <span>Logout</span>
+            <span>Sign Out</span>
           </button>
         </mat-menu>
       } @else {
-        <button mat-raised-button color="accent" routerLink="/login" class="login-btn">
-          <mat-icon>login</mat-icon>
-          <span>Login</span>
+        <button mat-flat-button class="login-button" routerLink="/login">
+          <mat-icon>person_outline</mat-icon>
+          <span>Sign In</span>
         </button>
       }
     </div>
-
-    <button mat-icon-button class="mobile-menu-btn">
-      <mat-icon>menu</mat-icon>
-    </button>
   </div>
-</mat-toolbar>
+</nav>

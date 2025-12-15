@@ -28,18 +28,21 @@
       <mat-card class="rating-summary-card">
         <div class="rating-hero">
           <div class="rating-score">
-            <div class="score-number">{{ s.avg_rating | number: '1.1' }}</div>
+            <div class="score-number">{{ (averageRating$ | async) || 0 | number: '1.1' }}</div>
             <div class="stars">
               <mat-icon
                 *ngFor="let star of [1, 2, 3, 4, 5]"
                 class="star-icon"
-                [class.filled]="star <= (s.avg_rating || 0)"
-                [class.half]="star > (s.avg_rating || 0) && star - 0.5 <= (s.avg_rating || 0)"
+                [class.filled]="star <= ((averageRating$ | async) || 0)"
+                [class.half]="
+                  star > ((averageRating$ | async) || 0) &&
+                  star - 0.5 <= ((averageRating$ | async) || 0)
+                "
               >
                 {{
-                  star <= (s.avg_rating || 0)
+                  star <= ((averageRating$ | async) || 0)
                     ? 'star'
-                    : star - 0.5 <= (s.avg_rating || 0)
+                    : star - 0.5 <= ((averageRating$ | async) || 0)
                       ? 'star_half'
                       : 'star_outline'
                 }}
@@ -51,7 +54,7 @@
             <div class="stat-item">
               <mat-icon class="stat-icon">people</mat-icon>
               <div class="stat-content">
-                <div class="stat-number">{{ s.count }}</div>
+                <div class="stat-number">{{ (reviewsCount$ | async) || 0 }}</div>
                 <div class="stat-label">Total Reviews</div>
               </div>
             </div>
@@ -77,7 +80,9 @@
           </div>
           <div class="info-row">
             <span class="info-label">Rating Score:</span>
-            <span class="info-value">{{ s.avg_rating | number: '1.2' }} / 5.00</span>
+            <span class="info-value"
+              >{{ (averageRating$ | async) || 0 | number: '1.2' }} / 5.00</span
+            >
           </div>
           <div class="info-row">
             <span class="info-label">Price:</span>
@@ -106,6 +111,139 @@
         </mat-card-content>
       </mat-card>
     </div>
+
+    <mat-card class="reviews-section-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="title-icon">rate_review</mat-icon>
+          Customer Reviews
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="write-review-section" *ngIf="user$ | async as user; else loginPrompt">
+          <button
+            mat-raised-button
+            color="accent"
+            (click)="toggleReviewForm()"
+            *ngIf="!showReviewForm"
+          >
+            <mat-icon>add_comment</mat-icon>
+            Write a Review
+          </button>
+
+          <div class="review-form" *ngIf="showReviewForm">
+            <h3>Share Your Experience</h3>
+            <form [formGroup]="reviewForm" (ngSubmit)="submitReview()">
+              <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Rating</mat-label>
+                <mat-select formControlName="rating">
+                  <mat-option *ngFor="let rating of ratingOptions" [value]="rating">
+                    {{ rating }} <span class="star-text">{{ '★'.repeat(rating) }}</span>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Your Review</mat-label>
+                <textarea
+                  matInput
+                  formControlName="comment"
+                  rows="4"
+                  placeholder="Tell others what you think about this product..."
+                ></textarea>
+                <mat-hint>Minimum 10 characters</mat-hint>
+                <mat-error *ngIf="reviewForm.get('comment')?.hasError('minlength')">
+                  Comment must be at least 10 characters
+                </mat-error>
+              </mat-form-field>
+
+              <div class="form-actions">
+                <button mat-raised-button type="button" (click)="toggleReviewForm()">Cancel</button>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="!reviewForm.valid"
+                >
+                  <mat-icon>send</mat-icon>
+                  Submit Review
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <ng-template #loginPrompt>
+          <div class="login-prompt">
+            <mat-icon>account_circle</mat-icon>
+            <p>Please log in to write a review</p>
+          </div>
+        </ng-template>
+
+        <div class="reviews-controls">
+          <div class="filter-section">
+            <span class="filter-label">Filter by rating:</span>
+            <mat-chip-listbox class="filter-chips">
+              <mat-chip-option
+                *ngFor="let rating of filterOptions"
+                [selected]="(filterRating$ | async) === rating"
+                (click)="setFilterRating(rating)"
+              >
+                {{ getFilterLabel(rating) }}
+              </mat-chip-option>
+            </mat-chip-listbox>
+          </div>
+
+          <div class="sort-section">
+            <mat-form-field appearance="fill">
+              <mat-label>Sort by</mat-label>
+              <mat-select [value]="sortBy$ | async" (selectionChange)="setSortBy($event.value)">
+                <mat-option *ngFor="let option of sortOptions" [value]="option.value">
+                  {{ option.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="reviews-list" *ngIf="!(reviewsLoading$ | async); else reviewsLoading">
+          <div class="review-card" *ngFor="let review of reviews$ | async">
+            <div class="review-header">
+              <div class="reviewer-info">
+                <mat-icon class="avatar-icon">account_circle</mat-icon>
+                <div class="reviewer-details">
+                  <span class="reviewer-name">{{ review.username }}</span>
+                  <span class="review-date">{{ review.createdAt | date: 'mediumDate' }}</span>
+                </div>
+              </div>
+              <div class="review-rating">
+                <mat-icon
+                  *ngFor="let star of getStarArray(review.rating)"
+                  class="star-icon"
+                  [class.filled]="star <= review.rating"
+                >
+                  {{ star <= review.rating ? 'star' : 'star_outline' }}
+                </mat-icon>
+              </div>
+            </div>
+            <div class="review-body">
+              <p>{{ review.comment }}</p>
+            </div>
+          </div>
+
+          <div class="empty-reviews" *ngIf="(reviews$ | async)?.length === 0">
+            <mat-icon>rate_review</mat-icon>
+            <p>No reviews yet. Be the first to review this product!</p>
+          </div>
+        </div>
+
+        <ng-template #reviewsLoading>
+          <div class="reviews-loading">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Loading reviews...</p>
+          </div>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
 
     <div class="action-section">
       <button mat-raised-button color="primary" (click)="back()" class="action-button">

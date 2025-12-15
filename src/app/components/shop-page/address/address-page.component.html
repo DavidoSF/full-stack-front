@@ -1,0 +1,152 @@
+<div class="address-container">
+  <div class="address-header">
+    <h1>My Addresses</h1>
+    <button mat-raised-button color="primary" (click)="toggleAddressForm()">
+      <mat-icon>{{ showForm ? 'close' : 'add' }}</mat-icon>
+      {{ showForm ? 'Cancel' : 'Add New Address' }}
+    </button>
+  </div>
+
+  <div class="address-form" *ngIf="showForm">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{
+          editingIndex !== null ? 'Edit Address' : 'New Address'
+        }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="addressForm" (ngSubmit)="saveAddress()">
+          <div class="form-row">
+            <mat-form-field appearance="fill">
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="firstName" required />
+              <mat-error *ngIf="addressForm.get('firstName')?.hasError('required')">
+                First name is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="lastName" required />
+              <mat-error *ngIf="addressForm.get('lastName')?.hasError('required')">
+                Last name is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="fill">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email" required />
+              <mat-error *ngIf="addressForm.get('email')?.hasError('required')">
+                Email is required
+              </mat-error>
+              <mat-error *ngIf="addressForm.get('email')?.hasError('email')">
+                Please enter a valid email
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Phone</mat-label>
+              <input matInput type="tel" formControlName="phone" required />
+              <mat-error *ngIf="addressForm.get('phone')?.hasError('required')">
+                Phone is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Street Address</mat-label>
+            <input matInput formControlName="street" required />
+            <mat-error *ngIf="addressForm.get('street')?.hasError('required')">
+              Street address is required
+            </mat-error>
+          </mat-form-field>
+
+          <div class="form-row">
+            <mat-form-field appearance="fill">
+              <mat-label>City</mat-label>
+              <input matInput formControlName="city" required />
+              <mat-error *ngIf="addressForm.get('city')?.hasError('required')">
+                City is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Postal Code</mat-label>
+              <input matInput formControlName="postalCode" required />
+              <mat-error *ngIf="addressForm.get('postalCode')?.hasError('required')">
+                Postal code is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Country</mat-label>
+              <input matInput formControlName="country" required />
+              <mat-error *ngIf="addressForm.get('country')?.hasError('required')">
+                Country is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" mat-button (click)="resetForm()">Cancel</button>
+            <button
+              type="submit"
+              mat-raised-button
+              color="primary"
+              [disabled]="addressForm.invalid"
+            >
+              {{ editingIndex !== null ? 'Update Address' : 'Save Address' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="addresses-list" *ngIf="(savedAddresses$ | async)?.length! > 0">
+    <h2>Saved Addresses</h2>
+    <div class="address-cards">
+      <mat-card *ngFor="let address of savedAddresses$ | async; let i = index" class="address-card">
+        <mat-card-header>
+          <mat-card-title>
+            {{ address.firstName }} {{ address.lastName }}
+            <span class="default-badge" *ngIf="isDefaultAddress(address)">DEFAULT</span>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p><mat-icon>email</mat-icon> {{ address.email }}</p>
+          <p><mat-icon>phone</mat-icon> {{ address.phone }}</p>
+          <p><mat-icon>location_on</mat-icon> {{ address.street }}</p>
+          <p class="city-info">{{ address.city }}, {{ address.postalCode }}</p>
+          <p>{{ address.country }}</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button (click)="setAsDefault(address)" [disabled]="isDefaultAddress(address)">
+            <mat-icon>star</mat-icon>
+            Set as Default
+          </button>
+          <button mat-button (click)="editAddress(i, address)">
+            <mat-icon>edit</mat-icon>
+            Edit
+          </button>
+          <button mat-button color="warn" (click)="deleteAddress(i)">
+            <mat-icon>delete</mat-icon>
+            Delete
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!(savedAddresses$ | async)?.length && !showForm">
+    <mat-icon>location_off</mat-icon>
+    <h2>No saved addresses</h2>
+    <p>Add an address to use during checkout</p>
+    <button mat-raised-button color="primary" (click)="toggleAddressForm()">
+      <mat-icon>add</mat-icon>
+      Add Your First Address
+    </button>
+  </div>
+</div>

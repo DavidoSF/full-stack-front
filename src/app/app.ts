@@ -1,5 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { AuthActions } from './components/login-page/state/auth.actions';
+import { WishlistActions } from './components/shop-page/wishlist/state/wishlist.actions';
+import { CartActions } from './components/shop-page/cart/state/cart.actions';
+import { ConfigActions } from './store/config/config.actions';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +13,15 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {
+export class App implements OnInit {
   protected readonly title = signal('my-shop');
+
+  constructor(private store: Store) {}
+
+  ngOnInit(): void {
+    this.store.dispatch(ConfigActions.loadConfig());
+    this.store.dispatch(CartActions.loadCart());
+    this.store.dispatch(WishlistActions.loadWishlist());
+    this.store.dispatch(AuthActions.loadAuthFromStorage());
+  }
 }

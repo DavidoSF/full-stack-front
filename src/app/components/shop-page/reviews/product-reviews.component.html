@@ -1,0 +1,146 @@
+<div class="reviews-container">
+  <mat-card class="reviews-header">
+    <h2>Customer Reviews</h2>
+
+    <div class="rating-summary" *ngIf="(reviews$ | async)?.length! > 0">
+      <div class="average-rating">
+        <div class="rating-number">{{ averageRating$ | async | number: '1.1' }}</div>
+        <div class="stars">
+          <span *ngFor="let filled of getStarArray((averageRating$ | async) || 0)">
+            {{ filled ? '★' : '☆' }}
+          </span>
+        </div>
+        <div class="total-reviews">{{ (reviews$ | async)?.length }} reviews</div>
+      </div>
+
+      <div class="rating-distribution" *ngIf="ratingDistribution$ | async as distribution">
+        <div class="rating-bar" *ngFor="let star of [5, 4, 3, 2, 1]">
+          <span class="star-label">{{ star }} ★</span>
+          <div class="bar">
+            <div class="bar-fill" [style.width.%]="getRatingPercentage(star, distribution)"></div>
+          </div>
+          <span class="count">{{ distribution[star] }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="write-review-section" *ngIf="user$ | async as user">
+      <button mat-raised-button color="primary" (click)="toggleReviewForm()">
+        <mat-icon>rate_review</mat-icon>
+        {{ showReviewForm ? 'Cancel' : 'Write a Review' }}
+      </button>
+    </div>
+
+    <div class="login-prompt" *ngIf="!(user$ | async)">
+      <p>Please log in to write a review</p>
+    </div>
+  </mat-card>
+
+  <mat-card class="review-form-card" *ngIf="showReviewForm">
+    <h3>Write Your Review</h3>
+    <form [formGroup]="reviewForm" (ngSubmit)="submitReview()">
+      <mat-form-field appearance="fill">
+        <mat-label>Rating</mat-label>
+        <mat-select formControlName="rating">
+          <mat-option [value]="5">5 Stars - Excellent</mat-option>
+          <mat-option [value]="4">4 Stars - Good</mat-option>
+          <mat-option [value]="3">3 Stars - Average</mat-option>
+          <mat-option [value]="2">2 Stars - Poor</mat-option>
+          <mat-option [value]="1">1 Star - Terrible</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="comment-field">
+        <mat-label>Your Review</mat-label>
+        <textarea
+          matInput
+          formControlName="comment"
+          rows="5"
+          placeholder="Tell us about your experience with this product (minimum 10 characters)..."
+        ></textarea>
+        <mat-hint>Minimum 10 characters</mat-hint>
+      </mat-form-field>
+
+      <div class="form-actions">
+        <button mat-button type="button" (click)="toggleReviewForm()">Cancel</button>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="!reviewForm.valid || (loading$ | async)"
+        >
+          Submit Review
+        </button>
+      </div>
+    </form>
+  </mat-card>
+
+  <mat-card class="filters-card" *ngIf="(reviews$ | async)?.length! > 0">
+    <div class="filters">
+      <div class="filter-section">
+        <label>Filter by Rating:</label>
+        <mat-chip-listbox>
+          <mat-chip-option
+            [selected]="(filterRating$ | async) === null"
+            (click)="setFilterRating(null)"
+          >
+            All
+          </mat-chip-option>
+          <mat-chip-option
+            *ngFor="let star of [5, 4, 3, 2, 1]"
+            [selected]="(filterRating$ | async) === star"
+            (click)="setFilterRating(star)"
+          >
+            {{ star }} ★
+          </mat-chip-option>
+        </mat-chip-listbox>
+      </div>
+
+      <div class="sort-section">
+        <label>Sort by:</label>
+        <mat-form-field appearance="outline">
+          <mat-select [value]="sortBy$ | async" (selectionChange)="setSortBy($event.value)">
+            <mat-option value="recent">Most Recent</mat-option>
+            <mat-option value="highest">Highest Rated</mat-option>
+            <mat-option value="lowest">Lowest Rated</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </mat-card>
+
+  <div class="loading-spinner" *ngIf="loading$ | async">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <div class="reviews-list" *ngIf="!(loading$ | async)">
+    <mat-card class="review-card" *ngFor="let review of reviews$ | async">
+      <div class="review-header">
+        <div class="reviewer-info">
+          <mat-icon class="user-avatar">account_circle</mat-icon>
+          <div>
+            <div class="reviewer-name">{{ review.username }}</div>
+            <div class="review-date">{{ review.createdAt | date: 'mediumDate' }}</div>
+          </div>
+        </div>
+        <div class="review-rating">
+          <span *ngFor="let filled of getStarArray(review.rating)" class="star">
+            {{ filled ? '★' : '☆' }}
+          </span>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="review-content">
+        <p>{{ review.comment }}</p>
+      </div>
+    </mat-card>
+
+    <div class="empty-reviews" *ngIf="(reviews$ | async)?.length === 0">
+      <mat-icon>rate_review</mat-icon>
+      <h3>No Reviews Yet</h3>
+      <p>Be the first to review this product!</p>
+    </div>
+  </div>
+</div>

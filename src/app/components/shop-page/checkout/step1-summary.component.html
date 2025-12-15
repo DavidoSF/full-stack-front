@@ -1,0 +1,67 @@
+<div class="step-container">
+  <h2>Order Summary</h2>
+
+  <div class="items-list">
+    <div class="item" *ngFor="let item of cartItems$ | async">
+      <div class="item-info">
+        <h3>{{ item.name }}</h3>
+        <p>Quantity: {{ item.quantity }}</p>
+      </div>
+      <div class="item-price">
+        {{ item.price * item.quantity | currency: 'EUR' }}
+      </div>
+    </div>
+  </div>
+
+  <div class="promo-section" *ngIf="hasPromoApplied$ | async">
+    <h3>Active Promotions</h3>
+    <div class="applied-promos">
+      <div class="promo-badge" *ngFor="let promo of appliedPromos$ | async">
+        <mat-icon>celebration</mat-icon>
+        <span>{{ promo }}</span>
+      </div>
+    </div>
+    <p class="promo-info">Promotions are automatically applied based on your cart items!</p>
+  </div>
+
+  <div class="summary-section">
+    <div class="summary-line">
+      <span>Items Total:</span>
+      <span>{{ subtotal$ | async | currency: 'EUR' }}</span>
+    </div>
+
+    <div class="summary-line discount" *ngIf="(discount$ | async)! > 0">
+      <span>Coupon Discount ({{ couponCode$ | async }}):</span>
+      <span class="discount-amount"
+        >-{{ ((subtotal$ | async)! * (discount$ | async)!) / 100 | currency: 'EUR' }}</span
+      >
+    </div>
+
+    <div class="summary-line discount" *ngIf="(promoDiscount$ | async)! > 0">
+      <span>Promo Discount:</span>
+      <span class="discount-amount">-{{ promoDiscount$ | async | currency: 'EUR' }}</span>
+    </div>
+
+    <div class="summary-line">
+      <span>Shipping:</span>
+      <span [class.free-shipping]="(shipping$ | async) === 0">
+        {{ (shipping$ | async) === 0 ? 'FREE' : (shipping$ | async | currency: 'EUR') }}
+      </span>
+    </div>
+
+    <div class="summary-line">
+      <span>Taxes ({{ (taxRate$ | async)! * 100 }}%):</span>
+      <span>{{ taxes$ | async | currency: 'EUR' }}</span>
+    </div>
+
+    <div class="summary-line total">
+      <strong>Total:</strong>
+      <strong>{{ total$ | async | currency: 'EUR' }}</strong>
+    </div>
+  </div>
+
+  <div class="step-actions">
+    <button class="secondary-btn" (click)="goBack()">Back to Cart</button>
+    <button class="primary-btn" (click)="nextStep()">Continue to Address</button>
+  </div>
+</div>

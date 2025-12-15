@@ -31,4 +31,12 @@ export const authReducer = createReducer(
     token: undefined,
     user: undefined,
   })),
+  on(AuthActions.loadAuthFromStorageSuccess, (state, { response }) => ({
+    ...state,
+    token: {
+      access: response.access,
+      refresh: response.refresh,
+    },
+    user: response.user,
+  })),
 );

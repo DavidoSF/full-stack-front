@@ -7,4 +7,11 @@ export interface ProductModel {
   price: number;
   ratings: ProductRatingModel[];
   _avg: number;
+  stock: number;
+  lowStockThreshold: number;
+  promo?: {
+    type: 'percentage' | 'free_shipping';
+    value?: number;
+    label: string;
+  };
 }

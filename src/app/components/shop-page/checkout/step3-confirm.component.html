@@ -1,0 +1,79 @@
+<div class="step-container">
+  <h2>Order Confirmation</h2>
+
+  <div class="confirmation-sections">
+    <div class="section">
+      <h3>Shipping Address</h3>
+      <div class="address-info" *ngIf="address">
+        <p>
+          <strong>{{ address.firstName }} {{ address.lastName }}</strong>
+        </p>
+        <p>{{ address.street }}</p>
+        <p>{{ address.city }}, {{ address.postalCode }}</p>
+        <p>{{ address.country }}</p>
+        <p>Email: {{ address.email }}</p>
+        <p>Phone: {{ address.phone }}</p>
+      </div>
+      <button class="edit-btn" (click)="editAddress()">Edit Address</button>
+    </div>
+
+    <div class="section">
+      <h3>Order Items</h3>
+      <div class="items-list">
+        <div class="item" *ngFor="let item of cartItems$ | async">
+          <div class="item-info">
+            <h4>{{ item.name }}</h4>
+            <p>Quantity: {{ item.quantity }} × {{ item.price | currency: 'EUR' }}</p>
+          </div>
+          <div class="item-total">
+            {{ item.price * item.quantity | currency: 'EUR' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Order Total</h3>
+      <div class="total-info">
+        <div class="summary-line">
+          <span>Items Total:</span>
+          <span>{{ subtotal$ | async | currency: 'EUR' }}</span>
+        </div>
+
+        <div class="summary-line discount" *ngIf="(discount$ | async)! > 0">
+          <span>Coupon Discount ({{ couponCode$ | async }}):</span>
+          <span>-{{ ((subtotal$ | async)! * (discount$ | async)!) / 100 | currency: 'EUR' }}</span>
+        </div>
+
+        <div class="summary-line discount" *ngIf="(promoDiscount$ | async)! > 0">
+          <span>Promo Discount ({{ (appliedPromos$ | async)?.[0] }}):</span>
+          <span>-{{ promoDiscount$ | async | currency: 'EUR' }}</span>
+        </div>
+
+        <div class="summary-line">
+          <span>Shipping:</span>
+          <span [class.free-shipping]="(shipping$ | async) === 0">
+            {{ (shipping$ | async) === 0 ? 'FREE' : (shipping$ | async | currency: 'EUR') }}
+          </span>
+        </div>
+
+        <div class="summary-line">
+          <span>Taxes ({{ (taxRate$ | async)! * 100 }}%):</span>
+          <span>{{ taxes$ | async | currency: 'EUR' }}</span>
+        </div>
+
+        <div class="total-line">
+          <span>Total:</span>
+          <span class="total-amount">{{ total$ | async | currency: 'EUR' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-actions">
+    <button class="secondary-btn" (click)="goBack()">Back</button>
+    <button class="primary-btn" (click)="placeOrder()" [disabled]="loading$ | async">
+      {{ (loading$ | async) ? 'Processing...' : 'Place Order' }}
+    </button>
+  </div>
+</div>

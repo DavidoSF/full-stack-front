@@ -1,0 +1,99 @@
+<div class="orders-container">
+  <div class="orders-header">
+    <h1>My Orders</h1>
+    <button mat-raised-button color="primary" (click)="continueShopping()">
+      <mat-icon>shopping_cart</mat-icon>
+      Continue Shopping
+    </button>
+  </div>
+
+  <div *ngIf="loading$ | async" class="loading">Loading orders...</div>
+
+  <div *ngIf="!(loading$ | async) && (orders$ | async)?.length === 0" class="empty-state">
+    <mat-icon>inbox</mat-icon>
+    <h2>No orders yet</h2>
+    <p>Start shopping to see your orders here!</p>
+    <button mat-raised-button color="primary" (click)="continueShopping()">Start Shopping</button>
+  </div>
+
+  <div class="orders-list" *ngIf="(orders$ | async)?.length! > 0">
+    <mat-card *ngFor="let order of orders$ | async" class="order-card">
+      <mat-card-header>
+        <mat-card-title>
+          <div class="order-header">
+            <span class="order-id">Order #{{ order.orderId }}</span>
+            <mat-chip [color]="getStatusColor(order.status!)" selected>
+              {{ order.status }}
+            </mat-chip>
+          </div>
+        </mat-card-title>
+        <mat-card-subtitle>
+          <div class="order-meta">
+            <span>Placed on {{ order.createdAt | date: 'medium' }}</span>
+            <span *ngIf="order.estimatedDelivery">
+              Est. Delivery: {{ order.estimatedDelivery | date: 'mediumDate' }}
+            </span>
+          </div>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="order-details">
+          <div class="order-items">
+            <h3>Items ({{ order.items.length }})</h3>
+            <div class="item" *ngFor="let item of order.items">
+              <span class="item-name">{{ item.name }} × {{ item.quantity }}</span>
+              <span class="item-price">{{ item.price * item.quantity | currency: 'EUR' }}</span>
+            </div>
+          </div>
+
+          <div class="order-address">
+            <h3>Shipping Address</h3>
+            <p>{{ order.shippingAddress.firstName }} {{ order.shippingAddress.lastName }}</p>
+            <p>{{ order.shippingAddress.street }}</p>
+            <p>{{ order.shippingAddress.city }}, {{ order.shippingAddress.postalCode }}</p>
+            <p>{{ order.shippingAddress.country }}</p>
+          </div>
+
+          <div class="order-summary">
+            <div class="summary-line">
+              <span>Subtotal:</span>
+              <span>{{ order.subtotal | currency: 'EUR' }}</span>
+            </div>
+            <div class="summary-line" *ngIf="order.discount && order.discount > 0">
+              <span>Discount ({{ order.couponCode }}):</span>
+              <span class="discount">-{{ order.discount | currency: 'EUR' }}</span>
+            </div>
+            <div class="summary-line">
+              <span>Shipping:</span>
+              <span>{{ order.shipping | currency: 'EUR' }}</span>
+            </div>
+            <div class="summary-line">
+              <span>Tax:</span>
+              <span>{{ order.tax | currency: 'EUR' }}</span>
+            </div>
+            <div class="summary-line total">
+              <span>Total:</span>
+              <span>{{ order.total | currency: 'EUR' }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="viewOrderDetails(order.orderId!)">
+          <mat-icon>visibility</mat-icon>
+          View Details
+        </button>
+        <button
+          mat-button
+          color="warn"
+          (click)="cancelOrder(order.orderId!)"
+          *ngIf="order.status !== 'Cancelled' && order.status !== 'Delivered'"
+        >
+          <mat-icon>cancel</mat-icon>
+          Cancel Order
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

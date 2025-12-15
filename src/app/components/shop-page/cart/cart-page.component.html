@@ -1,0 +1,82 @@
+<div class="cart-page">
+  <div class="cart-header">
+    <h1>Shopping Cart</h1>
+    <button class="continue-shopping" (click)="continueShopping()">← Continue Shopping</button>
+  </div>
+
+  <div class="cart-content" *ngIf="cartItems$ | async as items">
+    <div class="cart-empty" *ngIf="items.length === 0">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="80"
+        height="80"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+      </svg>
+      <h2>Your cart is empty</h2>
+      <p>Add some products to get started!</p>
+      <button class="primary-btn" (click)="continueShopping()">Browse Products</button>
+    </div>
+
+    <div class="cart-items-section" *ngIf="items.length > 0">
+      <div class="cart-items stagger-animate">
+        <app-cart-item
+          *ngFor="let item of items"
+          [item]="item"
+          (quantityChange)="onQuantityChange($event)"
+          (remove)="onRemoveItem($event)"
+          class="animate-slide-in-up"
+        ></app-cart-item>
+      </div>
+
+      <div class="cart-summary">
+        <h2>Order Summary</h2>
+
+        <div class="coupon-section">
+          <h3>Have a coupon?</h3>
+          <div class="coupon-input-group" *ngIf="!(couponCode$ | async)">
+            <input
+              type="text"
+              [(ngModel)]="couponInput"
+              placeholder="Enter coupon code"
+              (keyup.enter)="applyCoupon()"
+            />
+            <button (click)="applyCoupon()">Apply</button>
+          </div>
+          <div class="applied-coupon" *ngIf="couponCode$ | async as coupon">
+            <span>✓ Coupon applied: {{ coupon }}</span>
+          </div>
+          <p class="coupon-error" *ngIf="couponError">{{ couponError }}</p>
+          <p class="coupon-hint">Try: SAVE10, SAVE20, WELCOME, SUMMER25</p>
+        </div>
+
+        <div class="summary-line">
+          <span>Subtotal:</span>
+          <span>{{ subtotal$ | async | currency: 'EUR' }}</span>
+        </div>
+
+        <div class="summary-line" *ngIf="(discount$ | async) ?? 0 > 0">
+          <span>Discount ({{ discount$ | async }}%):</span>
+          <span class="discount">
+            -{{ ((subtotal$ | async)! * (discount$ | async)!) / 100 | currency: 'EUR' }}
+          </span>
+        </div>
+
+        <div class="summary-line total">
+          <span>Total:</span>
+          <span>{{ total$ | async | currency: 'EUR' }}</span>
+        </div>
+
+        <button class="checkout-btn" (click)="proceedToCheckout()">Proceed to Checkout</button>
+
+        <button class="clear-cart-btn" (click)="clearCart()">Clear Cart</button>
+      </div>
+    </div>
+  </div>
+</div>

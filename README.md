@@ -68,3 +68,107 @@ The wishlist uses a dedicated NgRx slice (separate from user state) because:
 - **Independent lifecycle**: Can be modified without user profile updates
 - **Better performance**: Selective updates don't trigger user state changes
 - **Reusable**: Can be accessed across multiple features without coupling to user module
+
+## Architecture & Technical Decisions
+
+### State Management Architecture
+
+**NgRx with Feature Slices**
+
+- Each major feature (user, auth, cart, wishlist, order, address, admin, reviews) has its own NgRx slice
+- **Rationale**: Modular, scalable, and easier to maintain than a monolithic store
+- Each slice contains: state interface, actions, reducer, selectors, and effects
+
+**Selector Strategy**
+
+- Memoized selectors for computed values (e.g., cart totals, filtered reviews, rating distribution)
+- **Rationale**: Prevents unnecessary recalculations and component re-renders
+- Complex selectors (e.g., `selectFilteredSortedReviews`) compose simpler selectors for maintainability
+
+### Data Persistence
+
+**localStorage for Client-Side State**
+
+- Cart items and wishlist persisted to localStorage via NgRx effects
+- **Rationale**: Maintains user state across sessions without server calls
+- Rehydrated on app initialization through `APP_INITIALIZER`
+
+**sessionStorage for Mock Data**
+
+- MSW mock handlers use sessionStorage for reviews (`msw_reviews_${productId}`)
+- **Rationale**: Simulates backend persistence during development without affecting production code
+- Cleared on app load to ensure fresh state
+
+### API & Mocking Strategy
+
+**MSW (Mock Service Worker)**
+
+- Intercepts HTTP requests at the network level
+- **Rationale**:
+  - No code changes needed between mock and real API
+  - Works in both browser and Storybook
+  - Enables full-stack development without backend dependency
+  - Realistic testing with network delays
+
+**Endpoints**: `/api/auth/`, `/api/products/`, `/api/cart/`, `/api/orders/`, `/api/addresses/`, `/api/reviews/`, `/api/admin/stats/`
+
+### Security & Authentication
+
+**JWT with Refresh Tokens**
+
+- Access token (15min) + refresh token (7 days)
+- **Rationale**: Balance between security and user experience
+
+**HTTP Interceptor**
+
+- Automatically attaches tokens to protected requests
+- Handles token refresh on 401 errors
+- **Rationale**: Centralized auth logic, no manual token handling in components
+
+**Route Guards**
+
+- `AuthGuard`: Protects authenticated routes
+- `AlreadyAuthenticatedGuard`: Redirects logged-in users from login page
+- **Rationale**: Declarative route protection, consistent UX
+
+### Component Architecture
+
+**Smart vs. Presentational Pattern**
+
+- **Smart Components**: Connected to NgRx store, handle business logic (e.g., `cart-page.component.ts`)
+- **Presentational Components**: Receive data via `@Input()`, emit events via `@Output()` (e.g., `cart-item.component.ts`)
+- **Rationale**: Reusability, testability, clear separation of concerns
+
+**Material Design System**
+
+- Angular Material for UI components
+- Custom theme in `custom-theme.scss`
+- **Rationale**: Consistent design language, accessibility, mobile-responsive out of the box
+
+### Routing Strategy
+
+**Lazy Loading by Feature**
+
+- Account, Admin, Shop routes loaded on demand
+- **Rationale**: Faster initial load, better code splitting, reduced bundle size
+
+**Route Structure**
+
+- Hierarchical: `/shop/products/:id`, `/account/orders/:id`
+- **Rationale**: RESTful conventions, intuitive navigation, bookmarkable URLs
+
+### Reviews & Ratings Synchronization
+
+**Real-time Rating Updates**
+
+- When review submitted → product ratings array updates → effects dispatch multiple actions
+- **Rationale**: Ensures UI stays consistent across product list, details, and review pages
+- Actions chain: `submitReviewSuccess` → `loadReviews` → `loadProductRating` → `loadProducts`
+
+### Development Tools
+
+**Storybook Integration**
+
+- Component documentation with isolated stories
+- **Rationale**: Visual testing, component library, design system documentation
+- Works with MSW for realistic data scenarios

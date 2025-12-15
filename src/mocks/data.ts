@@ -5,6 +5,8 @@ export interface Product {
   created_at: string;
   owner_id: number;
   ratings: { user_id: number; value: number }[];
+  stock: number;
+  lowStockThreshold: number;
   promo?: {
     type: 'percentage' | 'free_shipping';
     value?: number;
@@ -20,6 +22,8 @@ export const products: Product[] = [
     created_at: '2025-01-10T10:00:00Z',
     owner_id: 10,
     ratings: [],
+    stock: 50,
+    lowStockThreshold: 10,
     promo: {
       type: 'percentage',
       value: 10,
@@ -33,6 +37,8 @@ export const products: Product[] = [
     created_at: '2025-02-01T09:30:00Z',
     owner_id: 11,
     ratings: [],
+    stock: 5,
+    lowStockThreshold: 10,
   },
 
   {
@@ -42,6 +48,8 @@ export const products: Product[] = [
     created_at: '2025-02-12T12:00:00Z',
     owner_id: 12,
     ratings: [],
+    stock: 0,
+    lowStockThreshold: 5,
     promo: {
       type: 'free_shipping',
       label: 'FREE SHIPPING',
@@ -54,6 +62,8 @@ export const products: Product[] = [
     created_at: '2025-03-01T08:45:00Z',
     owner_id: 13,
     ratings: [],
+    stock: 100,
+    lowStockThreshold: 20,
   },
   {
     id: 5,
@@ -62,6 +72,8 @@ export const products: Product[] = [
     created_at: '2025-03-05T07:20:00Z',
     owner_id: 14,
     ratings: [],
+    stock: 8,
+    lowStockThreshold: 15,
   },
   {
     id: 6,
@@ -70,6 +82,8 @@ export const products: Product[] = [
     created_at: '2025-03-10T14:10:00Z',
     owner_id: 15,
     ratings: [],
+    stock: 75,
+    lowStockThreshold: 10,
   },
   {
     id: 7,
@@ -78,6 +92,8 @@ export const products: Product[] = [
     created_at: '2025-03-11T11:00:00Z',
     owner_id: 16,
     ratings: [],
+    stock: 3,
+    lowStockThreshold: 8,
   },
   {
     id: 8,
@@ -86,6 +102,8 @@ export const products: Product[] = [
     created_at: '2025-03-12T09:00:00Z',
     owner_id: 17,
     ratings: [],
+    stock: 200,
+    lowStockThreshold: 30,
   },
   {
     id: 9,
@@ -94,6 +112,8 @@ export const products: Product[] = [
     created_at: '2025-03-15T10:30:00Z',
     owner_id: 18,
     ratings: [],
+    stock: 0,
+    lowStockThreshold: 12,
   },
   {
     id: 10,
@@ -102,6 +122,8 @@ export const products: Product[] = [
     created_at: '2025-03-20T16:00:00Z',
     owner_id: 19,
     ratings: [],
+    stock: 25,
+    lowStockThreshold: 10,
   },
   {
     id: 11,
@@ -110,6 +132,8 @@ export const products: Product[] = [
     created_at: '2025-03-22T12:40:00Z',
     owner_id: 20,
     ratings: [],
+    stock: 15,
+    lowStockThreshold: 20,
   },
   {
     id: 12,
@@ -118,6 +142,8 @@ export const products: Product[] = [
     created_at: '2025-03-25T13:00:00Z',
     owner_id: 21,
     ratings: [],
+    stock: 40,
+    lowStockThreshold: 8,
   },
   {
     id: 13,
@@ -126,6 +152,8 @@ export const products: Product[] = [
     created_at: '2025-04-01T07:00:00Z',
     owner_id: 10,
     ratings: [],
+    stock: 60,
+    lowStockThreshold: 15,
   },
   {
     id: 14,
@@ -134,6 +162,8 @@ export const products: Product[] = [
     created_at: '2025-04-03T08:00:00Z',
     owner_id: 11,
     ratings: [],
+    stock: 2,
+    lowStockThreshold: 10,
     promo: {
       type: 'free_shipping',
       label: 'FREE SHIPPING',
@@ -146,6 +176,8 @@ export const products: Product[] = [
     created_at: '2025-04-05T10:20:00Z',
     owner_id: 12,
     ratings: [],
+    stock: 45,
+    lowStockThreshold: 10,
   },
   {
     id: 16,
@@ -154,6 +186,8 @@ export const products: Product[] = [
     created_at: '2025-04-10T14:00:00Z',
     owner_id: 13,
     ratings: [],
+    stock: 30,
+    lowStockThreshold: 10,
   },
   {
     id: 17,
@@ -162,6 +196,8 @@ export const products: Product[] = [
     created_at: '2025-04-12T12:30:00Z',
     owner_id: 14,
     ratings: [],
+    stock: 12,
+    lowStockThreshold: 15,
   },
   {
     id: 18,
@@ -170,6 +206,8 @@ export const products: Product[] = [
     created_at: '2025-04-15T11:10:00Z',
     owner_id: 15,
     ratings: [],
+    stock: 20,
+    lowStockThreshold: 5,
   },
   {
     id: 19,
@@ -178,6 +216,8 @@ export const products: Product[] = [
     created_at: '2025-04-18T09:40:00Z',
     owner_id: 16,
     ratings: [],
+    stock: 1,
+    lowStockThreshold: 5,
     promo: {
       type: 'percentage',
       value: 10,
@@ -191,5 +231,7 @@ export const products: Product[] = [
     created_at: '2025-04-20T15:00:00Z',
     owner_id: 17,
     ratings: [],
+    stock: 35,
+    lowStockThreshold: 10,
   },
 ];

@@ -44,6 +44,22 @@
   color: #ff9800;
 }
 
+.cart-item-details .stock .out-of-stock {
+  color: #f44336;
+  font-weight: 600;
+}
+
+.cart-item-details .stock-warning {
+  margin: 4px 0;
+  font-size: 12px;
+  color: #f44336;
+  font-weight: 600;
+  background-color: #ffebee;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
 .cart-item-quantity {
   display: flex;
   align-items: center;

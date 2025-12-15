@@ -4,7 +4,16 @@ import { WishlistItem } from '../../models/wishlist-item.model';
 export class WishlistActions {
   static addToWishlist = createAction(
     '[Wishlist] Add Item',
-    props<{ product: { id: number; name: string; price: number; imageUrl?: string } }>(),
+    props<{
+      product: {
+        id: number;
+        name: string;
+        price: number;
+        imageUrl?: string;
+        stock?: number;
+        lowStockThreshold?: number;
+      };
+    }>(),
   );
 
   static removeFromWishlist = createAction(

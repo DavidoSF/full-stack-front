@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, map, combineLatest, BehaviorSubject } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { ProductDetailsService } from './services/product-details.service';
@@ -10,6 +10,7 @@ import { ProductDetails } from './models/product-details.model';
 import { selectIsInWishlist } from '../wishlist/state/wishlist.selectors';
 import { CartActions } from '../cart/state/cart.actions';
 import { WishlistActions } from '../wishlist/state/wishlist.actions';
+import { selectCartItems } from '../cart/state/cart.selectors';
 
 @Component({
   selector: 'app-product-details-page',
@@ -24,6 +25,8 @@ export class ProductDetailsPageComponent implements OnInit {
   error: string | null = null;
   quantity = 1;
   isInWishlist$!: Observable<boolean>;
+  canAddToCart$!: Observable<boolean>;
+  private quantitySubject = new BehaviorSubject<number>(1);
 
   constructor(
     private route: ActivatedRoute,
@@ -38,7 +41,24 @@ export class ProductDetailsPageComponent implements OnInit {
     if (id) {
       this.loadProductDetails(id);
       this.isInWishlist$ = this.store.select(selectIsInWishlist(id));
+      this.initializeCanAddToCart(id);
     }
+  }
+
+  initializeCanAddToCart(productId: number): void {
+    this.canAddToCart$ = combineLatest([
+      this.store.select(selectCartItems),
+      this.quantitySubject.asObservable(),
+    ]).pipe(
+      map(([cartItems, currentQuantity]) => {
+        if (!this.product || this.product.stock === 0) {
+          return false;
+        }
+        const cartItem = cartItems.find((item) => item.productId === productId);
+        const quantityInCart = cartItem?.quantity || 0;
+        return quantityInCart + currentQuantity <= this.product.stock;
+      }),
+    );
   }
 
   loadProductDetails(id: number): void {
@@ -57,19 +77,39 @@ export class ProductDetailsPageComponent implements OnInit {
   }
 
   increaseQuantity(): void {
-    if (this.product && (this.product.stock === 0 || this.quantity < this.product.stock)) {
+    if (this.product && this.product.stock > 0 && this.quantity < this.product.stock) {
       this.quantity++;
+      this.quantitySubject.next(this.quantity);
     }
   }
 
   decreaseQuantity(): void {
     if (this.quantity > 1) {
       this.quantity--;
+      this.quantitySubject.next(this.quantity);
     }
   }
 
   addToCart(): void {
     if (this.product) {
+      if (this.product.stock === 0) {
+        this.snackBar.open('This product is out of stock', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+        });
+        return;
+      }
+
+      if (this.quantity > this.product.stock) {
+        this.snackBar.open(`Only ${this.product.stock} items available`, 'Close', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+        });
+        return;
+      }
+
       this.store.dispatch(
         CartActions.addItem({
           product: {
@@ -94,6 +134,23 @@ export class ProductDetailsPageComponent implements OnInit {
         });
 
       this.quantity = 1;
+      this.quantitySubject.next(1);
+    }
+  }
+
+  getStockStatus(): { message: string; cssClass: string } {
+    if (!this.product) {
+      return { message: '', cssClass: '' };
+    }
+
+    const { stock, lowStockThreshold } = this.product;
+
+    if (stock === 0) {
+      return { message: 'Out of stock', cssClass: 'out-of-stock' };
+    } else if (stock > 0 && stock <= lowStockThreshold) {
+      return { message: `Only ${stock} left`, cssClass: 'low-stock' };
+    } else {
+      return { message: 'In stock', cssClass: 'in-stock' };
     }
   }
 
@@ -117,6 +174,8 @@ export class ProductDetailsPageComponent implements OnInit {
               id: this.product.id,
               name: this.product.name,
               price: this.product.price,
+              stock: this.product.stock,
+              lowStockThreshold: this.product.lowStockThreshold,
             },
           }),
         );

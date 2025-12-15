@@ -32,10 +32,21 @@
         <div class="item-details">
           <h3>{{ item.name }}</h3>
           <p class="price">{{ item.price | currency: 'EUR' }}</p>
+          <div
+            class="stock-status"
+            *ngIf="item.stock !== undefined"
+            [ngClass]="getStockStatus(item).cssClass"
+          >
+            <span>{{ getStockStatus(item).message }}</span>
+          </div>
           <p class="added-date">Added {{ item.addedAt | date: 'mediumDate' }}</p>
         </div>
         <div class="item-actions">
-          <button class="add-to-cart-btn" (click)="addToCart(item)">
+          <button
+            class="add-to-cart-btn"
+            (click)="addToCart(item)"
+            [disabled]="!(canAddToCart$(item.productId, item.stock) | async)"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"

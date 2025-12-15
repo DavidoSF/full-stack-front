@@ -6,10 +6,11 @@
     <h3>{{ item.name }}</h3>
     <p class="price">{{ item.price | currency: 'EUR' }}</p>
     <p class="stock" *ngIf="item.stock !== undefined">
-      <span [class.low-stock]="item.stock < 10">
+      <span [class.low-stock]="showLowStockWarning()" [class.out-of-stock]="item.stock === 0">
         {{ item.stock > 0 ? 'In stock: ' + item.stock : 'Out of stock' }}
       </span>
     </p>
+    <p class="stock-warning" *ngIf="getStockWarning()">⚠️ {{ getStockWarning() }}</p>
   </div>
   <div class="cart-item-quantity">
     <button (click)="decreaseQuantity()" [disabled]="item.quantity <= 1">-</button>

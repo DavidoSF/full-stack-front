@@ -21,7 +21,11 @@ import {
 } from '../cart/state/cart.selectors';
 import { CartActions } from '../cart/state/cart.actions';
 import { OrderActions } from '../orders/state/order.actions';
-import { selectOrderLoading, selectCurrentOrder } from '../orders/state/order.selectors';
+import {
+  selectOrderLoading,
+  selectCurrentOrder,
+  selectOrderError,
+} from '../orders/state/order.selectors';
 import { selectTaxRate } from '../../../store/config/config.selectors';
 
 @Component({
@@ -89,6 +93,20 @@ export class Step3ConfirmComponent implements OnInit, OnDestroy {
           localStorage.removeItem('checkout_address');
           this.store.dispatch(OrderActions.clearCurrentOrder());
           this.router.navigate(['/shop/orders']);
+        }
+      });
+
+    this.store
+      .select(selectOrderError)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((error) => {
+        if (error) {
+          this.snackBar.open(`Order failed: ${error}`, 'Close', {
+            duration: 8000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+            panelClass: ['error-snackbar'],
+          });
         }
       });
   }

@@ -71,7 +71,12 @@ export const handlers = [
     const ordering = url.searchParams.get('ordering') || '-created_at';
 
     const rows = products
-      .map((p) => ({ ...p, _avg: avgRating(p.ratings) }))
+      .map((p) => ({
+        ...p,
+        _avg: avgRating(p.ratings),
+        description: `High quality ${p.name.toLowerCase()} for all your needs`,
+        promo: p.promo || null,
+      }))
       .filter((p) => p._avg >= min_rating);
 
     const sign = ordering.startsWith('-') ? -1 : 1;
@@ -109,7 +114,8 @@ export const handlers = [
         avg_rating: avgRating(p.ratings),
         ratings_count: p.ratings.length,
         description: `Detailed description for ${p.name}`,
-        stock: Math.floor(Math.random() * 100) + 10,
+        stock: p.stock,
+        lowStockThreshold: p.lowStockThreshold,
         category: 'Office Supplies',
         promo: p.promo || null,
       },
@@ -356,6 +362,45 @@ export const handlers = [
     );
   }),
 
+  // Validate stock: POST /api/cart/validate-stock/ -> validate product availability
+  http.post(`${API}/cart/validate-stock/`, async ({ request }) => {
+    const body = (await request.json()) as any;
+    const items = body.items || [];
+
+    const errors: string[] = [];
+
+    items.forEach((item: any) => {
+      const product = products.find((p) => p.id === item.product_id);
+      if (!product) {
+        errors.push(`Product with ID ${item.product_id} not found`);
+        return;
+      }
+
+      const requestedQuantity = item.quantity || 1;
+      if (product.stock < requestedQuantity) {
+        if (product.stock === 0) {
+          errors.push(`Insufficient stock for product "${product.name}". Product is out of stock.`);
+        } else {
+          errors.push(
+            `Insufficient stock for product "${product.name}". Only ${product.stock} available.`,
+          );
+        }
+      }
+    });
+
+    if (errors.length > 0) {
+      return HttpResponse.json(
+        {
+          error: errors.join(' '),
+          errors: errors,
+        },
+        { status: 400 },
+      );
+    }
+
+    return HttpResponse.json({ message: 'Stock validation successful' }, { status: 200 });
+  }),
+
   // Order creation: POST /api/order/ -> order confirmation
   http.post(`${API}/order/`, async ({ request }) => {
     const body = (await request.json()) as any;
@@ -386,6 +431,13 @@ export const handlers = [
     const shipping = body.shipping || 0;
     const tax = body.tax || 0;
     const total = body.total || 0;
+
+    (body.items || []).forEach((item: any) => {
+      const product = products.find((p) => p.id === item.product_id);
+      if (product) {
+        product.stock = Math.max(0, product.stock - (item.quantity || 1));
+      }
+    });
 
     const newOrder = {
       order_id: orderId,
@@ -757,6 +809,16 @@ export const handlers = [
     const ordersKey = `msw_orders_${currentUser.id || 'user-123'}`;
     const orders =
       typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem(ordersKey) || '[]') : [];
+
+    const cancelledOrder = orders.find((o: any) => o.order_id === orderId);
+    if (cancelledOrder && cancelledOrder.items) {
+      cancelledOrder.items.forEach((item: any) => {
+        const product = products.find((p) => p.id === (item.productId || item.product_id));
+        if (product) {
+          product.stock += item.quantity || 1;
+        }
+      });
+    }
 
     const updatedOrders = orders.filter((o: any) => o.order_id !== orderId);
 

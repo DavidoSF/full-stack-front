@@ -8,6 +8,7 @@ export interface ProductDetails {
   ratings_count: number;
   description: string;
   stock: number;
+  lowStockThreshold: number;
   category: string;
   promo?: {
     type: 'percentage' | 'free_shipping';

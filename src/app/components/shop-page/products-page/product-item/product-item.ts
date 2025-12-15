@@ -15,4 +15,20 @@ import { ProductModel } from '../../models/product.model';
 })
 export class ProductItem {
   @Input() product: ProductModel | undefined;
+
+  getStockStatus(): { message: string; cssClass: string } {
+    if (!this.product) {
+      return { message: '', cssClass: '' };
+    }
+
+    const { stock, lowStockThreshold } = this.product;
+
+    if (stock === 0) {
+      return { message: 'Out of stock', cssClass: 'out-of-stock' };
+    } else if (stock > 0 && stock <= lowStockThreshold) {
+      return { message: `Only ${stock} left`, cssClass: 'low-stock' };
+    } else {
+      return { message: 'In stock', cssClass: 'in-stock' };
+    }
+  }
 }

@@ -17,6 +17,8 @@ export const wishlistReducer = createReducer(
       price: product.price,
       imageUrl: product.imageUrl,
       addedAt: new Date().toISOString(),
+      stock: product.stock,
+      lowStockThreshold: product.lowStockThreshold,
     };
 
     return {

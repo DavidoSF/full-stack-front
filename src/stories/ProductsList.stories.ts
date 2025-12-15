@@ -20,6 +20,8 @@ const mockProducts: ProductModel[] = [
     price: 2.5,
     _avg: 4.0,
     ratings: [],
+    lowStockThreshold: 10,
+    stock: 50,
   },
   {
     id: 2,
@@ -28,6 +30,8 @@ const mockProducts: ProductModel[] = [
     price: 3.99,
     _avg: 4.5,
     ratings: [],
+    lowStockThreshold: 10,
+    stock: 8,
   },
   {
     id: 3,
@@ -36,6 +40,8 @@ const mockProducts: ProductModel[] = [
     price: 0.99,
     _avg: 3.8,
     ratings: [],
+    lowStockThreshold: 5,
+    stock: 0,
   },
   {
     id: 4,
@@ -44,6 +50,8 @@ const mockProducts: ProductModel[] = [
     price: 1.49,
     _avg: 4.2,
     ratings: [],
+    lowStockThreshold: 15,
+    stock: 12,
   },
   {
     id: 5,
@@ -52,6 +60,8 @@ const mockProducts: ProductModel[] = [
     price: 1.99,
     _avg: 4.1,
     ratings: [],
+    lowStockThreshold: 10,
+    stock: 25,
   },
   {
     id: 6,
@@ -60,6 +70,8 @@ const mockProducts: ProductModel[] = [
     price: 0.5,
     _avg: 4.3,
     ratings: [],
+    lowStockThreshold: 20,
+    stock: 60,
   },
   {
     id: 7,
@@ -68,6 +80,8 @@ const mockProducts: ProductModel[] = [
     price: 5.99,
     _avg: 4.6,
     ratings: [],
+    lowStockThreshold: 15,
+    stock: 18,
   },
   {
     id: 8,
@@ -76,6 +90,8 @@ const mockProducts: ProductModel[] = [
     price: 7.49,
     _avg: 4.0,
     ratings: [],
+    lowStockThreshold: 5,
+    stock: 4,
   },
   {
     id: 9,
@@ -84,6 +100,8 @@ const mockProducts: ProductModel[] = [
     price: 4.99,
     _avg: 4.4,
     ratings: [],
+    lowStockThreshold: 10,
+    stock: 30,
   },
   {
     id: 10,
@@ -92,6 +110,8 @@ const mockProducts: ProductModel[] = [
     price: 15.99,
     _avg: 4.7,
     ratings: [],
+    lowStockThreshold: 3,
+    stock: 2,
   },
 ];
 

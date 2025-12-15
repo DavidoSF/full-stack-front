@@ -38,13 +38,8 @@
         <span class="price">{{ product.price | currency: 'EUR' }}</span>
       </div>
 
-      <div
-        class="product-stock"
-        [class.low-stock]="product.stock < 10"
-        [class.out-of-stock]="product.stock === 0"
-      >
-        <span *ngIf="product.stock > 0">In Stock: {{ product.stock }} units</span>
-        <span *ngIf="product.stock === 0">Out of Stock</span>
+      <div class="product-stock" [ngClass]="getStockStatus().cssClass">
+        <span>{{ getStockStatus().message }}</span>
       </div>
 
       <div class="product-category"><strong>Category:</strong> {{ product.category }}</div>
@@ -70,7 +65,11 @@
         </div>
 
         <div class="action-buttons">
-          <button class="add-to-cart-btn" (click)="addToCart()" [disabled]="product.stock === 0">
+          <button
+            class="add-to-cart-btn"
+            (click)="addToCart()"
+            [disabled]="!(canAddToCart$ | async)"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"

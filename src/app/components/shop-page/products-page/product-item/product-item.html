@@ -34,6 +34,16 @@
         <span class="price-label">Price</span>
         <span class="price">€{{ product.price | number: '1.2-2' }}</span>
       </div>
+      <div class="stock-status" [ngClass]="getStockStatus().cssClass">
+        <mat-icon>{{
+          product.stock === 0
+            ? 'remove_shopping_cart'
+            : product.stock <= product.lowStockThreshold
+              ? 'warning'
+              : 'check_circle'
+        }}</mat-icon>
+        <span>{{ getStockStatus().message }}</span>
+      </div>
       <div class="action-buttons">
         <button
           mat-raised-button

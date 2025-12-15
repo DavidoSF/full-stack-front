@@ -30,6 +30,8 @@ export const Default: Story = {
       price: 2.5,
       _avg: 4.0,
       ratings: [],
+      lowStockThreshold: 10,
+      stock: 50,
     } as ProductModel,
   },
 };
@@ -43,6 +45,8 @@ export const HighRated: Story = {
       price: 15.99,
       _avg: 4.8,
       ratings: [],
+      lowStockThreshold: 5,
+      stock: 20,
     } as ProductModel,
   },
 };
@@ -56,6 +60,8 @@ export const LowRated: Story = {
       price: 0.99,
       _avg: 2.3,
       ratings: [],
+      lowStockThreshold: 10,
+      stock: 15,
     } as ProductModel,
   },
 };
@@ -69,6 +75,8 @@ export const NoRating: Story = {
       price: 5.49,
       _avg: 0,
       ratings: [],
+      lowStockThreshold: 8,
+      stock: 40,
     } as ProductModel,
   },
 };
@@ -82,6 +90,8 @@ export const Expensive: Story = {
       price: 249.99,
       _avg: 4.5,
       ratings: [],
+      lowStockThreshold: 2,
+      stock: 5,
     } as ProductModel,
   },
 };

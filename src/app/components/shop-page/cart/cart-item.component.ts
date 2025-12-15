@@ -16,12 +16,14 @@ export class CartItemComponent {
   @Output() remove = new EventEmitter<number>();
 
   increaseQuantity(): void {
-    if (this.item.stock === undefined || this.item.quantity < this.item.stock) {
-      this.quantityChange.emit({
-        productId: this.item.productId,
-        quantity: this.item.quantity + 1,
-      });
+    if (this.item.stock !== undefined && this.item.quantity >= this.item.stock) {
+      return;
     }
+
+    this.quantityChange.emit({
+      productId: this.item.productId,
+      quantity: this.item.quantity + 1,
+    });
   }
 
   decreaseQuantity(): void {
@@ -35,13 +37,43 @@ export class CartItemComponent {
 
   onQuantityChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const quantity = parseInt(input.value, 10);
-    if (!isNaN(quantity) && quantity > 0) {
+    let quantity = parseInt(input.value, 10);
+
+    if (isNaN(quantity) || quantity < 1) {
+      quantity = 1;
+    }
+
+    if (this.item.stock !== undefined && quantity > this.item.stock) {
+      quantity = this.item.stock;
+      input.value = quantity.toString();
+    }
+
+    if (quantity > 0) {
       this.quantityChange.emit({ productId: this.item.productId, quantity });
     }
   }
 
   onRemove(): void {
     this.remove.emit(this.item.productId);
+  }
+
+  getStockWarning(): string | null {
+    if (this.item.stock === undefined) {
+      return null;
+    }
+
+    if (this.item.stock === 0) {
+      return 'This item is out of stock';
+    }
+
+    if (this.item.quantity > this.item.stock) {
+      return `Only ${this.item.stock} available`;
+    }
+
+    return null;
+  }
+
+  showLowStockWarning(): boolean {
+    return this.item.stock !== undefined && this.item.stock > 0 && this.item.stock < 10;
   }
 }

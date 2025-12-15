@@ -30,12 +30,55 @@
     </div>
 
     <div class="nav-center">
-      <div class="search-container">
+      <div class="search-container" #searchContainer>
         <mat-icon>search</mat-icon>
-        <input type="text" placeholder="What are you looking for?" (input)="onSearch($event)" />
+        <input
+          type="text"
+          placeholder="What are you looking for?"
+          (input)="onSearch($event)"
+          (focus)="onSearchFocus()"
+          [value]="searchQuery()"
+        />
         <button mat-icon-button class="search-filter">
           <mat-icon>tune</mat-icon>
         </button>
+
+        @if (showSearchDropdown() && filteredProducts().length > 0) {
+          <div class="search-dropdown">
+            <div class="search-results-header">
+              <span>Products ({{ filteredProducts().length }})</span>
+            </div>
+            <div class="search-results">
+              @for (product of filteredProducts(); track product.id) {
+                <div class="search-result-item" (click)="selectProduct(product.id)">
+                  <div class="result-icon">
+                    <mat-icon>shopping_bag</mat-icon>
+                  </div>
+                  <div class="result-content">
+                    <div class="result-name">{{ product.name }}</div>
+                    <div class="result-price">${{ product.price.toFixed(2) }}</div>
+                  </div>
+                  @if (product._avg > 0) {
+                    <div class="result-rating">
+                      <mat-icon>star</mat-icon>
+                      <span>{{ product._avg.toFixed(1) }}</span>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+        @if (
+          showSearchDropdown() && searchQuery().trim().length > 0 && filteredProducts().length === 0
+        ) {
+          <div class="search-dropdown">
+            <div class="no-results">
+              <mat-icon>search_off</mat-icon>
+              <span>No products found</span>
+            </div>
+          </div>
+        }
       </div>
     </div>
 

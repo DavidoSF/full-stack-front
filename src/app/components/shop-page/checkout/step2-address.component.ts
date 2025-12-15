@@ -21,6 +21,7 @@ import {
 } from '../cart/state/cart.selectors';
 import { selectSavedAddresses, selectDefaultAddress } from '../address/state/address.selectors';
 import { AddressActions } from '../address/state/address.actions';
+import { selectTaxRate } from '../../../store/config/config.selectors';
 
 @Component({
   selector: 'app-step2-address',
@@ -40,6 +41,7 @@ export class Step2AddressComponent implements OnInit {
   shipping$!: Observable<number>;
   taxes$!: Observable<number>;
   appliedPromos$!: Observable<string[]>;
+  taxRate$!: Observable<number>;
   savedAddresses$!: Observable<Address[]>;
   defaultAddress$!: Observable<Address | null>;
   showForm = false;
@@ -72,6 +74,7 @@ export class Step2AddressComponent implements OnInit {
     this.shipping$ = this.store.select(selectShipping);
     this.taxes$ = this.store.select(selectTaxes);
     this.appliedPromos$ = this.store.select(selectAppliedPromos);
+    this.taxRate$ = this.store.select(selectTaxRate);
     this.savedAddresses$ = this.store.select(selectSavedAddresses);
     this.defaultAddress$ = this.store.select(selectDefaultAddress);
 

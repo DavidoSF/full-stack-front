@@ -22,6 +22,7 @@ import {
 import { CartActions } from '../cart/state/cart.actions';
 import { OrderActions } from '../orders/state/order.actions';
 import { selectOrderLoading, selectCurrentOrder } from '../orders/state/order.selectors';
+import { selectTaxRate } from '../../../store/config/config.selectors';
 
 @Component({
   selector: 'app-step3-confirm',
@@ -41,6 +42,7 @@ export class Step3ConfirmComponent implements OnInit, OnDestroy {
   shipping$!: Observable<number>;
   taxes$!: Observable<number>;
   appliedPromos$!: Observable<string[]>;
+  taxRate$!: Observable<number>;
   loading$!: Observable<boolean>;
   address: Address | null = null;
   private destroy$ = new Subject<void>();
@@ -62,6 +64,7 @@ export class Step3ConfirmComponent implements OnInit, OnDestroy {
     this.shipping$ = this.store.select(selectShipping);
     this.taxes$ = this.store.select(selectTaxes);
     this.appliedPromos$ = this.store.select(selectAppliedPromos);
+    this.taxRate$ = this.store.select(selectTaxRate);
     this.loading$ = this.store.select(selectOrderLoading);
 
     const addressData = localStorage.getItem('checkout_address');
@@ -128,21 +131,13 @@ export class Step3ConfirmComponent implements OnInit, OnDestroy {
     this.taxes$.pipe(take(1)).subscribe((t) => (taxes = t));
     this.appliedPromos$.pipe(take(1)).subscribe((a) => (appliedPromos = a));
 
-    const finalShipping = appliedPromos.length > 0 ? shipping : subtotal > 50 ? 0 : 5.99;
-    const finalTaxes =
-      appliedPromos.length > 0 ? taxes : (subtotal - (discount * subtotal) / 100) * 0.2;
-    const finalTotal =
-      appliedPromos.length > 0
-        ? total
-        : subtotal - (discount * subtotal) / 100 + finalShipping + finalTaxes;
-
     const order: Order = {
       items,
       shippingAddress: this.address,
       subtotal,
-      tax: finalTaxes,
-      shipping: finalShipping,
-      total: finalTotal,
+      tax: taxes,
+      shipping: shipping,
+      total: total,
       couponCode,
       discount,
       promoCode,

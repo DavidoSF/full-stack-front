@@ -18,6 +18,7 @@ import {
   selectAppliedPromos,
   selectHasPromoApplied,
 } from '../cart/state/cart.selectors';
+import { selectTaxRate } from '../../../store/config/config.selectors';
 
 @Component({
   selector: 'app-step1-summary',
@@ -39,6 +40,7 @@ export class Step1SummaryComponent implements OnInit {
   taxes$!: Observable<number>;
   appliedPromos$!: Observable<string[]>;
   hasPromoApplied$!: Observable<boolean>;
+  taxRate$!: Observable<number>;
 
   constructor(
     private store: Store,
@@ -58,6 +60,7 @@ export class Step1SummaryComponent implements OnInit {
     this.taxes$ = this.store.select(selectTaxes);
     this.appliedPromos$ = this.store.select(selectAppliedPromos);
     this.hasPromoApplied$ = this.store.select(selectHasPromoApplied);
+    this.taxRate$ = this.store.select(selectTaxRate);
   }
 
   goBack(): void {

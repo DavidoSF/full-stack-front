@@ -147,7 +147,7 @@
     </div>
 
     <div class="summary-line">
-      <span>Taxes (20%):</span>
+      <span>Taxes ({{ (taxRate$ | async)! * 100 }}%):</span>
       <span>{{ order.tax | currency: 'EUR' }}</span>
     </div>
 

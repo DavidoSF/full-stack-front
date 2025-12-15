@@ -21,6 +21,7 @@ import { OrderEffects } from './components/shop-page/orders/state/order.effects'
 import { AddressEffects } from './components/shop-page/address/state/address.effects';
 import { ReviewsEffects } from './components/shop-page/reviews/state/reviews.effects';
 import { AppEffects } from './store/app.effects';
+import { ConfigEffects } from './store/config/config.effects';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { httpTokenInterceptor } from './interceptors/http-interceptor';
@@ -44,6 +45,7 @@ export const appConfig: ApplicationConfig = {
       OrderEffects,
       AddressEffects,
       ReviewsEffects,
+      ConfigEffects,
     ]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     provideAnimationsAsync(),

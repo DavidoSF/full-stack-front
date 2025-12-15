@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { AuthActions } from './components/login-page/state/auth.actions';
 import { WishlistActions } from './components/shop-page/wishlist/state/wishlist.actions';
 import { CartActions } from './components/shop-page/cart/state/cart.actions';
+import { ConfigActions } from './store/config/config.actions';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,7 @@ export class App implements OnInit {
   constructor(private store: Store) {}
 
   ngOnInit(): void {
+    this.store.dispatch(ConfigActions.loadConfig());
     this.store.dispatch(CartActions.loadCart());
     this.store.dispatch(WishlistActions.loadWishlist());
     this.store.dispatch(AuthActions.loadAuthFromStorage());

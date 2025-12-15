@@ -5,7 +5,19 @@ import { paginate, avgRating } from './utils';
 
 const API = '/api';
 
+// Store configuration
+const storeConfig = {
+  taxRate: 0.1, // 10% tax
+  freeShippingThreshold: 50, // Free shipping above €50
+  standardShippingFee: 5.99,
+};
+
 export const handlers = [
+  // Store config: GET /api/config/ -> store configuration
+  http.get(`${API}/config/`, () => {
+    return HttpResponse.json(storeConfig, { status: 200 });
+  }),
+
   // Auth: POST /api/auth/token/ -> { access, refresh, user }
   http.post(`${API}/auth/token/`, async ({ request }) => {
     const body = (await request.json()) as any;
@@ -178,8 +190,9 @@ export const handlers = [
       };
     });
 
-    const tax = subtotal * 0.2;
-    const shipping = subtotal > 50 ? 0 : 5.99;
+    const tax = subtotal * storeConfig.taxRate;
+    const shipping =
+      subtotal > storeConfig.freeShippingThreshold ? 0 : storeConfig.standardShippingFee;
     const total = subtotal + tax + shipping;
 
     return HttpResponse.json(
@@ -222,7 +235,8 @@ export const handlers = [
     };
 
     let discount = 0;
-    let shipping = itemsTotal > 50 ? 0 : 5.99;
+    let shipping =
+      itemsTotal > storeConfig.freeShippingThreshold ? 0 : storeConfig.standardShippingFee;
     const appliedPromos: string[] = [];
 
     if (promoCode && promoCodes[promoCode]) {
@@ -252,7 +266,7 @@ export const handlers = [
     }
 
     const subtotalAfterDiscount = itemsTotal - discount;
-    const taxes = subtotalAfterDiscount * 0.2; // 20% tax
+    const taxes = subtotalAfterDiscount * storeConfig.taxRate;
     const grandTotal = subtotalAfterDiscount + taxes + shipping;
 
     return HttpResponse.json(
@@ -284,7 +298,8 @@ export const handlers = [
     });
 
     let discount = 0;
-    let shipping = itemsTotal > 50 ? 0 : 5.99;
+    let shipping =
+      itemsTotal > storeConfig.freeShippingThreshold ? 0 : storeConfig.standardShippingFee;
     const appliedPromos: string[] = [];
     let promoCode = '';
 
@@ -317,14 +332,14 @@ export const handlers = [
       }
     }
 
-    if (itemsTotal >= 50 && !hasPercentagePromo) {
-      discount = itemsTotal * 0.2;
+    if (itemsTotal >= storeConfig.freeShippingThreshold && !hasPercentagePromo) {
+      discount = itemsTotal * storeConfig.taxRate;
       promoCode = 'VIP20';
       appliedPromos.push('VIP20');
     }
 
     const subtotalAfterDiscount = itemsTotal - discount;
-    const taxes = subtotalAfterDiscount * 0.2;
+    const taxes = subtotalAfterDiscount * storeConfig.taxRate;
     const grandTotal = subtotalAfterDiscount + taxes + shipping;
 
     return HttpResponse.json(

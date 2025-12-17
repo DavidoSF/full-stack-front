@@ -15,6 +15,7 @@ export const authReducer = createReducer(
   on(AuthActions.loginSuccess, (state, { response }) => ({
     ...state,
     loading: false,
+    error: undefined,
     token: {
       access: response.access,
       refresh: response.refresh,

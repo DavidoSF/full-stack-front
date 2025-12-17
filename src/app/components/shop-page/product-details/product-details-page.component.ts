@@ -5,17 +5,25 @@ import { Store } from '@ngrx/store';
 import { Observable, map, combineLatest, BehaviorSubject } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { ProductDetailsService } from './services/product-details.service';
 import { ProductDetails } from './models/product-details.model';
 import { selectIsInWishlist } from '../wishlist/state/wishlist.selectors';
 import { CartActions } from '../cart/state/cart.actions';
 import { WishlistActions } from '../wishlist/state/wishlist.actions';
 import { selectCartItems } from '../cart/state/cart.selectors';
+import { ProductDetailsSkeleton } from './product-details-skeleton/product-details-skeleton';
 
 @Component({
   selector: 'app-product-details-page',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule, MatIconModule],
+  imports: [
+    CommonModule,
+    MatSnackBarModule,
+    MatIconModule,
+    MatButtonModule,
+    ProductDetailsSkeleton,
+  ],
   templateUrl: './product-details-page.component.html',
   styleUrls: ['./product-details-page.component.scss'],
 })
@@ -27,6 +35,7 @@ export class ProductDetailsPageComponent implements OnInit {
   isInWishlist$!: Observable<boolean>;
   canAddToCart$!: Observable<boolean>;
   private quantitySubject = new BehaviorSubject<number>(1);
+  private productId: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -37,12 +46,15 @@ export class ProductDetailsPageComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (id) {
-      this.loadProductDetails(id);
-      this.isInWishlist$ = this.store.select(selectIsInWishlist(id));
-      this.initializeCanAddToCart(id);
-    }
+    setTimeout(() => {
+      const id = Number(this.route.snapshot.paramMap.get('id'));
+      if (id) {
+        this.productId = id;
+        this.loadProductDetails(id);
+        this.isInWishlist$ = this.store.select(selectIsInWishlist(id));
+        this.initializeCanAddToCart(id);
+      }
+    }, 2000);
   }
 
   initializeCanAddToCart(productId: number): void {
@@ -63,17 +75,22 @@ export class ProductDetailsPageComponent implements OnInit {
 
   loadProductDetails(id: number): void {
     this.loading = true;
+    this.error = null;
     this.productDetailsService.getProductDetails(id).subscribe({
       next: (product) => {
         this.product = product;
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Failed to load product details';
+        this.error = 'Failed to load product details. Please try again.';
         this.loading = false;
         console.error(err);
       },
     });
+  }
+
+  retry(): void {
+    this.loadProductDetails(this.productId);
   }
 
   increaseQuantity(): void {

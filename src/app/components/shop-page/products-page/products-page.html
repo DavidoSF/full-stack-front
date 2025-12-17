@@ -14,29 +14,94 @@
     </div>
   </div>
 
-  <div class="products-grid">
-    <ng-container *ngIf="products$ | async as products">
+  <div class="filters-section">
+    <mat-card class="filters-card">
+      <div class="filters-content">
+        <div class="filter-group">
+          <label for="minRating">Minimum Rating:</label>
+          <mat-form-field appearance="outline">
+            <mat-select
+              id="minRating"
+              [(ngModel)]="minRating"
+              (selectionChange)="onMinRatingChange($event.value)"
+              placeholder="All ratings"
+            >
+              <mat-option [value]="undefined">All ratings</mat-option>
+              <mat-option [value]="4">4+ ⭐</mat-option>
+              <mat-option [value]="3">3+ ⭐</mat-option>
+              <mat-option [value]="2">2+ ⭐</mat-option>
+              <mat-option [value]="1">1+ ⭐</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="filter-group">
+          <label for="ordering">Sort By:</label>
+          <mat-form-field appearance="outline">
+            <mat-select
+              id="ordering"
+              [(ngModel)]="ordering"
+              (selectionChange)="onOrderingChange($event.value)"
+              placeholder="Default"
+            >
+              <mat-option [value]="undefined">Default</mat-option>
+              <mat-option value="name">Name (A-Z)</mat-option>
+              <mat-option value="-name">Name (Z-A)</mat-option>
+              <mat-option value="price">Price (Low to High)</mat-option>
+              <mat-option value="-price">Price (High to Low)</mat-option>
+              <mat-option value="-avg_rating">Rating (High to Low)</mat-option>
+              <mat-option value="avg_rating">Rating (Low to High)</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <div class="error-state" *ngIf="error$ | async as error">
+    <mat-card class="error-card">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h3>Failed to load products</h3>
+      <p>{{ error?.message || 'An error occurred while loading products. Please try again.' }}</p>
+      <button mat-raised-button color="primary" (click)="retry()">
+        <mat-icon>refresh</mat-icon>
+        Retry
+      </button>
+    </mat-card>
+  </div>
+
+  <div class="products-grid" *ngIf="isLoadingSkeleton">
+    <app-product-skeleton *ngFor="let i of [1, 2, 3, 4, 5, 6]"></app-product-skeleton>
+  </div>
+
+  <div class="products-grid" *ngIf="!isLoadingSkeleton && !(error$ | async)">
+    <ng-container *ngIf="realProducts$ | async as products">
       <div *ngIf="products.length === 0" class="empty-state">
-        <mat-icon class="empty-icon">inventory_2</mat-icon>
-        <h3>No products available</h3>
-        <p>Check back later for new items</p>
+        <mat-icon class="empty-icon">search_off</mat-icon>
+        <h3>No products match your filters</h3>
+        <p>Try adjusting your search criteria or clear filters to see all products</p>
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="
+            minRating = undefined;
+            ordering = undefined;
+            onMinRatingChange(undefined);
+            onOrderingChange(undefined)
+          "
+        >
+          Clear Filters
+        </button>
       </div>
 
       <div class="product-card" *ngFor="let p of products">
         <app-product-item [product]="p"></app-product-item>
       </div>
     </ng-container>
-
-    <ng-container *ngIf="!(products$ | async)">
-      <div class="loading-state">
-        <div class="spinner"></div>
-        <p>Loading products…</p>
-      </div>
-    </ng-container>
   </div>
 
   <ng-container *ngIf="count$ | async as totalCount">
-    <div class="pagination">
+    <div class="pagination" *ngIf="!(loading$ | async) && !(error$ | async) && totalCount > 0">
       <div class="pagination-info">
         <span class="results-count">
           Showing {{ (page - 1) * page_size + 1 }}-{{

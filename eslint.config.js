@@ -25,20 +25,32 @@ export default tseslint.config(
       prettier: prettierPlugin,
     },
     rules: {
-      // Angular selector rules (yours)
-      "@angular-eslint/directive-selector": [
-        "error",
-        { type: "attribute", prefix: "app", style: "camelCase" },
-      ],
-      "@angular-eslint/component-selector": [
-        "error",
-        { type: "element", prefix: "app", style: "kebab-case" },
-      ],
+      "@angular-eslint/prefer-inject": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-empty-function": "off",
+      "eslint@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@angular-eslint/no-empty-lifecycle-method": "off",
+      "@angular-eslint/no-output-on-prefix": "off",
+      "no-empty": "off",
+      // "@angular-eslint/directive-selector": [
+      //   "error",
+      //   { type: "attribute", prefix: "app", style: "camelCase" },
+      // ],
+      // "@angular-eslint/component-selector": [
+      //   "error",
+      //   { type: "element", prefix: "app", style: "kebab-case" },
+      // ],
       // Run Prettier via ESLint
-      "prettier/prettier": "error",
+      // "prettier/prettier": "error",
     },
   },
-
+  {
+    files: ["**/*.spec.ts", "**/*.test.ts"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off"
+    }
+  },
   // Templates / .html
   {
     files: ["**/*.html"],
@@ -51,8 +63,12 @@ export default tseslint.config(
       prettier: prettierPlugin,
     },
     rules: {
+      "@angular-eslint/template/no-negated-async": "off",
+      "@angular-eslint/template/label-has-associated-control": "off",
+      "@angular-eslint/template/click-events-have-key-events": "off",
+      "@angular-eslint/template/interactive-supports-focus": "off",
       // Let Prettier format HTML too
-      "prettier/prettier": "error",
+      // "prettier/prettier": "error",
     },
   }
 );

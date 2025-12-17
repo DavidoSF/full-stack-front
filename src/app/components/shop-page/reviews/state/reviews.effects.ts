@@ -2,16 +2,18 @@ import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
-import { map, catchError, switchMap } from 'rxjs/operators';
+import { map, catchError, switchMap, tap } from 'rxjs/operators';
 import { ReviewsActions } from './reviews.actions';
 import { environment } from '../../../../../environments/environment';
 import { ProductReview } from '../../models/product-review.model';
 import { ProductActions } from '../../state/product.actions';
+import { NotificationService } from '../../../../shared/services/notification.service';
 
 @Injectable()
 export class ReviewsEffects {
   private actions$ = inject(Actions);
   private http = inject(HttpClient);
+  private notificationService = inject(NotificationService);
 
   loadReviews$ = createEffect(() =>
     this.actions$.pipe(
@@ -47,5 +49,29 @@ export class ReviewsEffects {
           ),
       ),
     ),
+  );
+
+  submitReviewSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(ReviewsActions.submitReviewSuccess),
+        tap(() => {
+          this.notificationService.success('Review submitted successfully!');
+        }),
+      ),
+    { dispatch: false },
+  );
+
+  submitReviewFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(ReviewsActions.submitReviewFailure),
+        tap(({ error }) => {
+          const message =
+            error?.error?.message || error?.message || 'Failed to submit review. Please try again.';
+          this.notificationService.error(message);
+        }),
+      ),
+    { dispatch: false },
   );
 }

@@ -4,16 +4,14 @@ import { of } from 'rxjs';
 import { map, catchError, switchMap, tap } from 'rxjs/operators';
 import { UserActions } from './user.actions';
 import { UserService } from './user.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Injectable()
 export class UserEffects {
   private actions$ = inject(Actions);
+  private notificationService = inject(NotificationService);
 
-  constructor(
-    private userService: UserService,
-    private snackBar: MatSnackBar,
-  ) {}
+  constructor(private userService: UserService) {}
 
   loadUser$ = createEffect(() =>
     this.actions$.pipe(
@@ -48,11 +46,7 @@ export class UserEffects {
       this.actions$.pipe(
         ofType(UserActions.updateUserSuccess),
         tap(() => {
-          this.snackBar.open('Profile updated successfully!', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'end',
-            verticalPosition: 'top',
-          });
+          this.notificationService.success('Profile updated successfully!');
         }),
       ),
     { dispatch: false },
@@ -85,12 +79,7 @@ export class UserEffects {
           UserActions.loadUserOrdersFailure,
         ),
         tap(({ error }) => {
-          this.snackBar.open(error, 'Close', {
-            duration: 5000,
-            horizontalPosition: 'end',
-            verticalPosition: 'top',
-            panelClass: ['error-snackbar'],
-          });
+          this.notificationService.error(error);
         }),
       ),
     { dispatch: false },

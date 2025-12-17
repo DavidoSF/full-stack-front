@@ -8,10 +8,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Address } from '../models/address.model';
 import { AddressActions } from './state/address.actions';
 import { selectSavedAddresses, selectDefaultAddress } from './state/address.selectors';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-address-page',
@@ -24,7 +24,6 @@ import { selectSavedAddresses, selectDefaultAddress } from './state/address.sele
     MatCardModule,
     MatInputModule,
     MatFormFieldModule,
-    MatSnackBarModule,
   ],
   templateUrl: './address-page.component.html',
   styleUrls: ['./address-page.component.scss'],
@@ -39,7 +38,7 @@ export class AddressPageComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private store: Store,
-    private snackBar: MatSnackBar,
+    private notificationService: NotificationService,
   ) {
     this.addressForm = this.fb.group({
       firstName: ['', Validators.required],
@@ -72,10 +71,10 @@ export class AddressPageComponent implements OnInit {
 
       if (this.editingIndex !== null) {
         this.store.dispatch(AddressActions.updateAddress({ index: this.editingIndex, address }));
-        this.snackBar.open('Address updated successfully!', 'Close', { duration: 3000 });
+        this.notificationService.success('Address updated successfully!');
       } else {
         this.store.dispatch(AddressActions.addAddress({ address }));
-        this.snackBar.open('Address saved successfully!', 'Close', { duration: 3000 });
+        this.notificationService.success('Address saved successfully!');
       }
 
       this.resetForm();
@@ -93,7 +92,7 @@ export class AddressPageComponent implements OnInit {
   deleteAddress(index: number) {
     if (confirm('Are you sure you want to delete this address?')) {
       this.store.dispatch(AddressActions.removeAddress({ index }));
-      this.snackBar.open('Address deleted successfully!', 'Close', { duration: 3000 });
+      this.notificationService.success('Address deleted successfully!');
     }
   }
 
@@ -110,7 +109,7 @@ export class AddressPageComponent implements OnInit {
 
     if (index >= 0) {
       this.store.dispatch(AddressActions.setDefaultAddress({ index, address }));
-      this.snackBar.open('Default address updated!', 'Close', { duration: 3000 });
+      this.notificationService.success('Default address updated!');
     }
   }
 

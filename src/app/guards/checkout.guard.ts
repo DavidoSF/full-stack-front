@@ -1,25 +1,21 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { map, take } from 'rxjs/operators';
 import { selectCartItems } from '../components/shop-page/cart/state/cart.selectors';
+import { NotificationService } from '../shared/services/notification.service';
 
 export const checkoutGuard: CanActivateFn = (route, state) => {
   const store = inject(Store);
   const router = inject(Router);
-  const snackBar = inject(MatSnackBar);
+  const notificationService = inject(NotificationService);
 
   return store.select(selectCartItems).pipe(
     take(1),
     map((items) => {
       if (items.length === 0) {
         console.warn('Checkout blocked: Cart is empty');
-        snackBar.open('Your cart is empty. Add items before checkout.', 'Close', {
-          duration: 5000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-        });
+        notificationService.warning('Your cart is empty. Add items before checkout.');
         router.navigate(['/shop/cart']);
         return false;
       }

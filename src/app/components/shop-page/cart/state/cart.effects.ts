@@ -8,6 +8,7 @@ import { selectCartItems } from './cart.selectors';
 import { CartItem } from '../../models/cart-item.model';
 import { CartActions } from './cart.actions';
 import { environment } from '../../../../../environments/environment';
+import { NotificationService } from '../../../../shared/services/notification.service';
 
 @Injectable()
 export class CartEffects {
@@ -15,6 +16,7 @@ export class CartEffects {
   private actions$ = inject(Actions);
   private store = inject(Store);
   private http = inject(HttpClient);
+  private notificationService = inject(NotificationService);
   saveCart$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -77,6 +79,28 @@ export class CartEffects {
     ),
   );
 
+  applyCouponSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(CartActions.applyCouponSuccess),
+        tap(({ couponCode, discount }) => {
+          this.notificationService.success(`Coupon ${couponCode} applied! You saved ${discount}%`);
+        }),
+      ),
+    { dispatch: false },
+  );
+
+  applyCouponFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(CartActions.applyCouponFailure),
+        tap(({ error }) => {
+          this.notificationService.error(error || 'Invalid coupon code. Please try again.');
+        }),
+      ),
+    { dispatch: false },
+  );
+
   applyPromoCode$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CartActions.applyPromoCode),
@@ -121,6 +145,36 @@ export class CartEffects {
           );
       }),
     ),
+  );
+
+  applyPromoCodeSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(CartActions.applyPromoCodeSuccess),
+        tap(({ promoCode, appliedPromos }) => {
+          if (appliedPromos && appliedPromos.length > 0) {
+            this.notificationService.success(
+              `Promo code "${promoCode}" applied! Active promotions: ${appliedPromos.join(', ')}`,
+            );
+          } else {
+            this.notificationService.success(`Promo code "${promoCode}" applied!`);
+          }
+        }),
+      ),
+    { dispatch: false },
+  );
+
+  applyPromoCodeFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(CartActions.applyPromoCodeFailure),
+        tap(({ error }) => {
+          this.notificationService.error(
+            error || 'Invalid promo code. Please check and try again.',
+          );
+        }),
+      ),
+    { dispatch: false },
   );
 
   autoApplyPromo$ = createEffect(() =>

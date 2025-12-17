@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, map, combineLatest, BehaviorSubject } from 'rxjs';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ProductDetailsService } from './services/product-details.service';
@@ -13,17 +12,12 @@ import { CartActions } from '../cart/state/cart.actions';
 import { WishlistActions } from '../wishlist/state/wishlist.actions';
 import { selectCartItems } from '../cart/state/cart.selectors';
 import { ProductDetailsSkeleton } from './product-details-skeleton/product-details-skeleton';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-product-details-page',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatSnackBarModule,
-    MatIconModule,
-    MatButtonModule,
-    ProductDetailsSkeleton,
-  ],
+  imports: [CommonModule, MatIconModule, MatButtonModule, ProductDetailsSkeleton],
   templateUrl: './product-details-page.component.html',
   styleUrls: ['./product-details-page.component.scss'],
 })
@@ -42,7 +36,7 @@ export class ProductDetailsPageComponent implements OnInit {
     private router: Router,
     private productDetailsService: ProductDetailsService,
     private store: Store,
-    private snackBar: MatSnackBar,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -110,20 +104,12 @@ export class ProductDetailsPageComponent implements OnInit {
   addToCart(): void {
     if (this.product) {
       if (this.product.stock === 0) {
-        this.snackBar.open('This product is out of stock', 'Close', {
-          duration: 3000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-        });
+        this.notificationService.warning('This product is out of stock');
         return;
       }
 
       if (this.quantity > this.product.stock) {
-        this.snackBar.open(`Only ${this.product.stock} items available`, 'Close', {
-          duration: 3000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-        });
+        this.notificationService.warning(`Only ${this.product.stock} items available`);
         return;
       }
 
@@ -139,16 +125,13 @@ export class ProductDetailsPageComponent implements OnInit {
         }),
       );
 
-      this.snackBar
-        .open(`${this.product.name} added to cart!`, 'View Cart', {
-          duration: 3000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-        })
-        .onAction()
-        .subscribe(() => {
-          this.router.navigate(['/shop/cart']);
-        });
+      const snackBarRef = this.notificationService.success(
+        `${this.product.name} added to cart!`,
+        'View Cart',
+      );
+      snackBarRef.onAction().subscribe(() => {
+        this.router.navigate(['/shop/cart']);
+      });
 
       this.quantity = 1;
       this.quantitySubject.next(1);
@@ -179,11 +162,7 @@ export class ProductDetailsPageComponent implements OnInit {
     if (this.product) {
       if (isInWishlist) {
         this.store.dispatch(WishlistActions.removeFromWishlist({ productId: this.product.id }));
-        this.snackBar.open('Removed from wishlist', 'Close', {
-          duration: 2000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-        });
+        this.notificationService.info('Removed from wishlist');
       } else {
         this.store.dispatch(
           WishlistActions.addToWishlist({
@@ -196,16 +175,10 @@ export class ProductDetailsPageComponent implements OnInit {
             },
           }),
         );
-        this.snackBar
-          .open('Added to wishlist!', 'View Wishlist', {
-            duration: 3000,
-            horizontalPosition: 'right',
-            verticalPosition: 'top',
-          })
-          .onAction()
-          .subscribe(() => {
-            this.router.navigate(['/shop/wishlist']);
-          });
+        const snackBarRef = this.notificationService.success('Added to wishlist!', 'View Wishlist');
+        snackBarRef.onAction().subscribe(() => {
+          this.router.navigate(['/shop/wishlist']);
+        });
       }
     }
   }

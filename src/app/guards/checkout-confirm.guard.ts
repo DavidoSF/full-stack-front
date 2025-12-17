@@ -1,25 +1,21 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { map, take } from 'rxjs/operators';
 import { selectCartItems } from '../components/shop-page/cart/state/cart.selectors';
+import { NotificationService } from '../shared/services/notification.service';
 
 export const checkoutConfirmGuard: CanActivateFn = (route, state) => {
   const store = inject(Store);
   const router = inject(Router);
-  const snackBar = inject(MatSnackBar);
+  const notificationService = inject(NotificationService);
 
   return store.select(selectCartItems).pipe(
     take(1),
     map((items) => {
       if (items.length === 0) {
         console.warn('Checkout confirmation blocked: Cart is empty');
-        snackBar.open('Your cart is empty. Add items before checkout.', 'Close', {
-          duration: 5000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-        });
+        notificationService.warning('Your cart is empty. Add items before checkout.');
         router.navigate(['/shop/cart']);
         return false;
       }
@@ -27,11 +23,7 @@ export const checkoutConfirmGuard: CanActivateFn = (route, state) => {
       const addressData = localStorage.getItem('checkout_address');
       if (!addressData) {
         console.warn('Checkout confirmation blocked: Address is missing');
-        snackBar.open('Please provide a delivery address first.', 'Close', {
-          duration: 5000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-        });
+        notificationService.warning('Please provide a delivery address first.');
         router.navigate(['/shop/checkout/address']);
         return false;
       }
@@ -55,21 +47,13 @@ export const checkoutConfirmGuard: CanActivateFn = (route, state) => {
           console.warn(
             `Checkout confirmation blocked: Missing required address fields: ${missingFields.join(', ')}`,
           );
-          snackBar.open('Please complete all required address fields.', 'Close', {
-            duration: 5000,
-            horizontalPosition: 'right',
-            verticalPosition: 'top',
-          });
+          notificationService.warning('Please complete all required address fields.');
           router.navigate(['/shop/checkout/address']);
           return false;
         }
       } catch (error) {
         console.error('Error parsing address data:', error);
-        snackBar.open('Invalid address data. Please re-enter your address.', 'Close', {
-          duration: 5000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-        });
+        notificationService.error('Invalid address data. Please re-enter your address.');
         router.navigate(['/shop/checkout/address']);
         return false;
       }

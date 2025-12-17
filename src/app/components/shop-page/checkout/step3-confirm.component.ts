@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil, take } from 'rxjs';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Address } from '../models/address.model';
 import { CartItem } from '../models/cart-item.model';
 import { Order } from '../models/order.model';
@@ -27,11 +26,12 @@ import {
   selectOrderError,
 } from '../orders/state/order.selectors';
 import { selectTaxRate } from '../../../store/config/config.selectors';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-step3-confirm',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule],
+  imports: [CommonModule],
   templateUrl: './step3-confirm.component.html',
   styleUrls: ['./step3-confirm.component.scss'],
 })
@@ -54,7 +54,7 @@ export class Step3ConfirmComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     private router: Router,
-    private snackBar: MatSnackBar,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -83,11 +83,7 @@ export class Step3ConfirmComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((order) => {
         if (order) {
-          this.snackBar.open('Order placed successfully!', 'Close', {
-            duration: 5000,
-            horizontalPosition: 'right',
-            verticalPosition: 'top',
-          });
+          this.notificationService.success('Order placed successfully!');
 
           this.store.dispatch(CartActions.clearCart());
           localStorage.removeItem('checkout_address');
@@ -101,12 +97,7 @@ export class Step3ConfirmComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((error) => {
         if (error) {
-          this.snackBar.open(`Order failed: ${error}`, 'Close', {
-            duration: 8000,
-            horizontalPosition: 'right',
-            verticalPosition: 'top',
-            panelClass: ['error-snackbar'],
-          });
+          this.notificationService.error(`Order failed: ${error}`);
         }
       });
   }

@@ -38,7 +38,7 @@ export class OrderDetailsModalComponent implements OnInit {
   }
 
   getStatusSteps(): string[] {
-    const statusMap: { [key: string]: string } = {
+    const statusMap: Record<string, string> = {
       confirmed: 'confirmed',
       processing: 'processing',
       shipped: 'shipped',

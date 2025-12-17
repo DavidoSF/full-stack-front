@@ -52,7 +52,7 @@ export class ProductReviewsComponent implements OnInit {
   reviews$!: Observable<ProductReview[]>;
   loading$!: Observable<boolean>;
   averageRating$!: Observable<number>;
-  ratingDistribution$!: Observable<{ [key: number]: number }>;
+  ratingDistribution$!: Observable<Record<number, number>>;
   filterRating$!: Observable<number | null>;
   sortBy$!: Observable<'recent' | 'highest' | 'lowest'>;
   user$!: Observable<any>;
@@ -110,7 +110,7 @@ export class ProductReviewsComponent implements OnInit {
     return this.stars.map((star) => star <= rating);
   }
 
-  getRatingPercentage(star: number, distribution: { [key: number]: number }): number {
+  getRatingPercentage(star: number, distribution: Record<number, number>): number {
     const total = Object.values(distribution).reduce((sum, count) => sum + count, 0);
     if (total === 0) return 0;
     return (distribution[star] / total) * 100;

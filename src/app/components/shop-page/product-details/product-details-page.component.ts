@@ -29,7 +29,7 @@ export class ProductDetailsPageComponent implements OnInit {
   isInWishlist$!: Observable<boolean>;
   canAddToCart$!: Observable<boolean>;
   private quantitySubject = new BehaviorSubject<number>(1);
-  private productId: number = 0;
+  private productId = 0;
 
   constructor(
     private route: ActivatedRoute,

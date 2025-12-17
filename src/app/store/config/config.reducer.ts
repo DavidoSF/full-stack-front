@@ -19,5 +19,5 @@ export const configReducer = createReducer(
     ...state,
     loading: false,
     error,
-  }))
+  })),
 );

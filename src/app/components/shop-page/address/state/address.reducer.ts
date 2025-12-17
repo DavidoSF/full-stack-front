@@ -24,5 +24,5 @@ export const addressReducer = createReducer(
     ...state,
     savedAddresses: addresses,
     defaultAddress,
-  }))
+  })),
 );

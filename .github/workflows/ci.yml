@@ -22,7 +22,9 @@ jobs:
         run: npm run lint --if-present
 
       - name: Unit tests
-        run: npm test -- --watch=false --code-coverage
+        run: npm test -- --watch=false --code-coverage --browsers=ChromeHeadlessCI
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
 
       - name: Build
         run: npm run build

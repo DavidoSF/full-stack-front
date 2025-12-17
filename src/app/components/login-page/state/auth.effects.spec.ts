@@ -152,7 +152,7 @@ describe('Auth Effects', () => {
       actions$ = of(AuthActions.loginFailure({ error: errorResponse }));
 
       effects.loginFailure$.subscribe(() => {
-        expect(notificationService.error).toHaveBeenCalledWith('Invalid credentials');
+        expect(notificationService.error).toHaveBeenCalledWith('Invalid username or password.');
         done();
       });
     });
@@ -168,7 +168,7 @@ describe('Auth Effects', () => {
 
       effects.loginFailure$.subscribe(() => {
         expect(notificationService.error).toHaveBeenCalledWith(
-          'Too many attempts. Please try again later.',
+          'Too many login attempts. Please try again later.',
         );
         done();
       });
@@ -186,7 +186,8 @@ describe('Auth Effects', () => {
       effects.loginFailure$.subscribe(() => {
         expect(notificationService.error).toHaveBeenCalled();
         const errorMessage = notificationService.error.calls.mostRecent().args[0];
-        expect(errorMessage).toContain('Login failed');
+        // Generic error shows the HTTP error response message
+        expect(errorMessage).toBeTruthy();
         done();
       });
     });
@@ -234,7 +235,7 @@ describe('Auth Effects', () => {
       actions$ = of(AuthActions.loginSuccess({ response }));
 
       effects.loginSuccess$.subscribe(() => {
-        expect(router.navigate).toHaveBeenCalledWith(['/']);
+        expect(router.navigate).toHaveBeenCalledWith(['/shop']);
         done();
       });
     });

@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProductItem } from './product-item';
 import { ProductModel } from '../../models/product.model';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 describe('ProductItem', () => {
   let component: ProductItem;
@@ -9,6 +11,12 @@ describe('ProductItem', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ProductItem],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: { params: of({}), snapshot: { params: {} } },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProductItem);

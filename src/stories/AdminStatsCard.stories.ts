@@ -4,20 +4,6 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { fn } from 'storybook/test';
-
-interface StatCard {
-  icon: string;
-  label: string;
-  value: number | string;
-  subtitle?: string;
-  trend?: {
-    value: number;
-    isPositive: boolean;
-  };
-  iconColor?: string;
-  iconBackground?: string;
-}
 
 @Component({
   selector: 'app-admin-stats-card',

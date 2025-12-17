@@ -151,7 +151,7 @@ export const Interactive: Story = {
     productId: 42,
     onToggle: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async () => {
     // Users can interact with the button in the story
   },
 };

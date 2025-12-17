@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { moduleMetadata, applicationConfig } from '@storybook/angular';
+import { moduleMetadata } from '@storybook/angular';
 import { CommonModule } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
-import { provideMockStore } from '@ngrx/store/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';

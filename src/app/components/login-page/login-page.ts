@@ -41,16 +41,16 @@ export class LoginPage implements OnInit {
   });
 
   @Input()
-  rememberMeEnabled: boolean = false;
+  rememberMeEnabled = false;
 
   @Input()
-  username: string = '';
+  username = '';
 
   @Input()
-  password: string = '';
+  password = '';
 
   @Input()
-  invalid: boolean = false;
+  invalid = false;
 
   ngOnInit(): void {
     if (this.rememberMeEnabled) {

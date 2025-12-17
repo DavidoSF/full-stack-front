@@ -48,7 +48,7 @@ export const selectAverageRating = createSelector(selectAllReviews, (reviews) =>
 });
 
 export const selectRatingDistribution = createSelector(selectAllReviews, (reviews) => {
-  const distribution: { [key: number]: number } = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  const distribution: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
   reviews.forEach((review) => {
     if (review.rating >= 1 && review.rating <= 5) {
       distribution[review.rating]++;

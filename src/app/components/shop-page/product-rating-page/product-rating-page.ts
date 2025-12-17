@@ -55,7 +55,7 @@ export class ProductRatingPage implements OnInit, OnDestroy {
   loading$?: Observable<boolean | undefined>;
   error$?: Observable<any>;
   summary$?: Observable<any>;
-  ratingDistribution: { [key: number]: number } = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  ratingDistribution: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
   private destroy$ = new Subject<void>();
 
   product: ProductModel | undefined;

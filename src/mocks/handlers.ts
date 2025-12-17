@@ -228,13 +228,14 @@ export const handlers = [
       itemsTotal += price;
     });
 
-    const promoCodes: {
-      [key: string]: {
+    const promoCodes: Record<
+      string,
+      {
         type: 'percentage' | 'freeship' | 'conditional';
         value?: number;
         minAmount?: number;
-      };
-    } = {
+      }
+    > = {
       WELCOME10: { type: 'percentage', value: 10 },
       FREESHIP: { type: 'freeship' },
       VIP20: { type: 'conditional', value: 20, minAmount: 50 },

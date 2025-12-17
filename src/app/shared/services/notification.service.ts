@@ -34,25 +34,25 @@ export class NotificationService {
     },
   };
 
-  success(message: string, action: string = 'Close', config?: MatSnackBarConfig) {
+  success(message: string, action = 'Close', config?: MatSnackBarConfig) {
     return this.show(message, action, 'success', config);
   }
 
-  error(message: string, action: string = 'Close', config?: MatSnackBarConfig) {
+  error(message: string, action = 'Close', config?: MatSnackBarConfig) {
     return this.show(message, action, 'error', config);
   }
 
-  warning(message: string, action: string = 'Close', config?: MatSnackBarConfig) {
+  warning(message: string, action = 'Close', config?: MatSnackBarConfig) {
     return this.show(message, action, 'warning', config);
   }
 
-  info(message: string, action: string = 'Close', config?: MatSnackBarConfig) {
+  info(message: string, action = 'Close', config?: MatSnackBarConfig) {
     return this.show(message, action, 'info', config);
   }
 
   show(
     message: string,
-    action: string = 'Close',
+    action = 'Close',
     type: NotificationType = 'info',
     config?: MatSnackBarConfig,
   ) {

@@ -8,6 +8,8 @@ export interface ProductState {
   previous?: string | null;
   page?: number;
   page_size?: number;
+  min_rating?: number;
+  ordering?: string;
 
   loading?: boolean;
   error?: any;

@@ -4,12 +4,14 @@ import { createEffect } from '@ngrx/effects';
 import { ofType } from '@ngrx/effects';
 import { ProductActions } from './product.actions';
 import { ProductService } from '../services/product.service';
-import { catchError, switchMap, map, of } from 'rxjs';
+import { catchError, switchMap, map, of, tap } from 'rxjs';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Injectable()
 export class ProductEffects {
   private actions$ = inject(Actions);
   private productService = inject(ProductService);
+  private notificationService = inject(NotificationService);
 
   constructor() {}
 
@@ -50,5 +52,16 @@ export class ProductEffects {
         ),
       ),
     ),
+  );
+
+  loadProductsFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(ProductActions.loadProductsFailure),
+        tap(() => {
+          this.notificationService.error('Failed to load products. Please try again.');
+        }),
+      ),
+    { dispatch: false },
   );
 }

@@ -61,6 +61,12 @@ export class Step1SummaryComponent implements OnInit {
     this.appliedPromos$ = this.store.select(selectAppliedPromos);
     this.hasPromoApplied$ = this.store.select(selectHasPromoApplied);
     this.taxRate$ = this.store.select(selectTaxRate);
+
+    this.cartItems$.subscribe((items) => {
+      if (items.length === 0) {
+        this.router.navigate(['/shop/cart']);
+      }
+    });
   }
 
   goBack(): void {

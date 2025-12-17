@@ -10,6 +10,9 @@ import { Step2AddressComponent } from './checkout/step2-address.component';
 import { Step3ConfirmComponent } from './checkout/step3-confirm.component';
 import { OrdersPageComponent } from './orders/orders-page.component';
 import { AddressPageComponent } from './address/address-page.component';
+import { checkoutGuard } from '../../guards/checkout.guard';
+import { checkoutAddressGuard } from '../../guards/checkout-address.guard';
+import { checkoutConfirmGuard } from '../../guards/checkout-confirm.guard';
 
 export const routes: Routes = [
   {
@@ -27,9 +30,17 @@ export const routes: Routes = [
         path: 'checkout',
         children: [
           { path: '', redirectTo: 'summary', pathMatch: 'full' },
-          { path: 'summary', component: Step1SummaryComponent },
-          { path: 'address', component: Step2AddressComponent },
-          { path: 'confirm', component: Step3ConfirmComponent },
+          { path: 'summary', component: Step1SummaryComponent, canActivate: [checkoutGuard] },
+          {
+            path: 'address',
+            component: Step2AddressComponent,
+            canActivate: [checkoutAddressGuard],
+          },
+          {
+            path: 'confirm',
+            component: Step3ConfirmComponent,
+            canActivate: [checkoutConfirmGuard],
+          },
         ],
       },
       {

@@ -1,16 +1,16 @@
 import { inject, Injectable } from '@angular/core';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthActions } from './auth.actions';
 import { AuthService } from '../services/auth.service';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Injectable()
 export class AuthEffects {
   private actions$ = inject(Actions);
   private authService = inject(AuthService);
-  private snackBar = inject(MatSnackBar);
+  private notificationService = inject(NotificationService);
   private router = inject(Router);
 
   login$ = createEffect(() =>
@@ -43,18 +43,27 @@ export class AuthEffects {
       this.actions$.pipe(
         ofType(AuthActions.loginFailure),
         tap((action) => {
-          let message = 'Login failed. Please try again.';
+          let message = 'Login failed. Please check your credentials and try again.';
           try {
             const err = (action as any).error;
             if (err && typeof err === 'object') {
-              if (err.message) message = err.message;
-              else if (err.error && err.error.message) message = err.error.message;
+              if (err.status === 401) {
+                message = 'Invalid username or password.';
+              } else if (err.status === 429) {
+                message = 'Too many login attempts. Please try again later.';
+              } else if (err.message) {
+                message = err.message;
+              } else if (err.error && err.error.message) {
+                message = err.error.message;
+              } else if (err.error && err.error.detail) {
+                message = err.error.detail;
+              }
             } else if (typeof err === 'string') {
               message = err;
             }
           } catch (e) {}
 
-          this.snackBar.open(message, 'Close', { duration: 5000 });
+          this.notificationService.error(message);
         }),
       ),
     { dispatch: false },

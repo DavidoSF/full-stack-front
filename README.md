@@ -25,6 +25,15 @@ npm start              # → http://localhost:4200/
 npm run storybook      # → http://localhost:6006/
 ```
 
+## Quality
+
+- **Unit Tests**: Run `npm test` for interactive tests or `npm test -- --watch=false --code-coverage` for single-run with coverage reports
+- **Linting**: Run `npm run lint` to check code style and best practices with ESLint
+- **CI Pipeline**: On every PR, GitHub Actions automatically runs linting, unit tests with coverage thresholds (50% statements/functions/lines, 40% branches), builds the application, and builds Storybook
+- **Docker**: Build with `docker build -t myshop .` and run with `docker run -p 8080:80 myshop`, then access at `http://localhost:8080`
+- **Pre-commit Hooks**: Husky runs lint-staged on commit to auto-fix ESLint issues and format code with Prettier (optional but configured)
+- **Coverage Thresholds**: Tests must maintain minimum 50% coverage for statements/functions/lines and 40% for branches
+
 ## Routes
 
 ### Public
